@@ -17,6 +17,7 @@
     },
     "dependencies": {
         "bootstrap": "^5.3.3",
+        "sweetalert2": "^11.14.4",
         "vue": "^3.5.12",
         "vue-router": "^4.0.13"
     }
