@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('books', function (Blueprint $table) {
             $table->id();
-            $table->string('category_id')->nullable(); // String for category id
-            $table->string('book_rack_id')->nullable();
+            $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
+            $table->string('book_rack_id')->nullable()->constrained('book_racks')->onDelete('set null');
             $table->string('rack_layer')->nullable();
             $table->string('floor')->nullable();  // Location like 'R1C3'
             $table->string('location_id')->nullable();
