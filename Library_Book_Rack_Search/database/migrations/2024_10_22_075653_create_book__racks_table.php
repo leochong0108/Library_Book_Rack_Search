@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('book__racks', function (Blueprint $table) {
+        Schema::create('book_racks', function (Blueprint $table) {
             $table->id();
             $table->string('rack_layer')->nullable();
             $table->string('floor')->nullable();  // Location like 'R1C3'
