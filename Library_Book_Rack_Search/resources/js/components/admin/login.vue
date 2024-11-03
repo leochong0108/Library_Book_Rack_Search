@@ -66,6 +66,11 @@
                         confirmButtonText: 'Ok'
                     });
 
+                    localStorage.setItem('access_token', response.data.access_token);
+
+                    // Set the Authorization header for future requests
+                    axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`;
+
                     //redirect to login page
                     this.$router.push('/api/index');
 

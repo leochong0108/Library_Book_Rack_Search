@@ -47,7 +47,12 @@ export default {
 
             if (result.isConfirmed) {
                 try {
-                    await axios.post('/api/logout');
+                    await axios.post('/api/logout', {});
+
+                    if (localStorage.getItem('access_token')) {
+                      localStorage.removeItem('access_token');
+                    }
+
                     await this.$swal.fire({
                         title: 'Logout successful',
                         icon: 'success',
@@ -57,13 +62,13 @@ export default {
                     this.$router.push('/api');
                 } catch (error) {
                     console.error('Logout failed:', error);
-                    // this.$swal.fire({
-                    //     title: 'Error',
-                    //     text: 'Logout failed. Please try again.',
-                    //     icon: 'error',
-                    //     confirmButtonColor: '#d33',
-                    //     confirmButtonText: 'Okay'
-                    // });
+                    this.$swal.fire({
+                        title: 'Error',
+                        text: 'Logout failed. Please try again.',
+                        icon: 'error',
+                        confirmButtonColor: '#d33',
+                        confirmButtonText: 'Okay'
+                    });
                 }
             }
       }

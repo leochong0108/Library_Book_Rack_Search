@@ -40,25 +40,29 @@ class LoginController extends Controller
             $credentials['name'] = $request->usernameOrEmail;
         }
 
-        if(Auth::attempt($credentials)){
-            // Authentication passed...
-            return response()->json(['success' => true]);
+        if(!Auth::attempt($credentials)){
+            return response()->json(['success' => false, 'message' => 'Invalid login information'], 401);
         }
 
-        return response()->json(['success' => false, 'message' => 'Invalid login information'], 401);
+        $user = Auth::user();
+
+        $token = $user->createToken('API Token')->plainTextToken;
+
+        return response()->json([
+            'success' => true,
+            'access_token' => $token,
+            'token_type' => 'Bearer'
+        ]);
     }
 
     public function logout(Request $request)
     {
-        // Log out the user
-        Auth::logout();
-    
-        // Invalidate the session
-        $request->session()->invalidate();
-    
-        // Regenerate the CSRF token
-        $request->session()->regenerateToken();
-    
+        $user = Auth::user();
+
+        if($user){
+            $user->currentAccessToken()->delete();
+        }
+
         return response()->json(['success' => true]);
     }
 }
