@@ -143,10 +143,23 @@ class BookController extends Controller
             DB::rollBack();
 
             return response()->json([
-                'success'=>false
-            ]);
+
+                'success'=>false,
+                'message' => 'An error occurred while renting the book: ' . $e->getMessage()
+
+            ], 500);
 
         }
+    }
+
+    public function findBookByScan($id){
+
+         $book = Book::findOrFail($id);
+
+         return response()->json([
+            'success' => true,
+            'data' => $book,
+         ]);
     }
 
 }
