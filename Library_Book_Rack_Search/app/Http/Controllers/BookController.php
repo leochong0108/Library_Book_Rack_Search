@@ -115,7 +115,7 @@ class BookController extends Controller
         DB::beginTransaction();
 
         try{
-            $book = Book::finOrFail($id);
+            $book = Book::findOrFail($id);
 
             if(!$book->is_available){
                 return response()->json(['success' => false, 'message' => 'Book is unavailable']);
