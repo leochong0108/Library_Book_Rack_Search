@@ -8,6 +8,7 @@ import AdminLayout from '../components/admin/layout.vue';
 import AdminDashboard from '../components/admin/dashboard.vue';
 import Category from '../components/admin/category/index.vue';
 import CreateCategory from '../components/admin/category/create.vue';
+import EditCategory from '../components/admin/category/edit.vue';
 
 // User
 import UserLayout from '../components/user/layout.vue';
@@ -47,6 +48,12 @@ const adminRoutes = [
           path: '/api/category/create', // Path for Add Category
           name: 'CreateCategory',
           component: CreateCategory,
+      },
+      {
+        path: '/api/category/:id/edit', // Path for Edit Category
+        name: 'EditCategory',
+        component: EditCategory,
+        props: true
       },
       // Add more child routes as needed
     ]

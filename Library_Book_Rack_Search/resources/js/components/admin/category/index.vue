@@ -34,7 +34,7 @@
                   <button class="btn btn-secondary btn-sm ms-1" @click="copyToClipboard(category.name, index)"> <i :class="copyIcon(index)"></i></button>
               </td>
               <td>
-                  <button class="btn btn-success" @click="editCategory(category.id)"><i class="fas fa-edit"></i>&nbsp;Edit</button>
+                  <button class="btn btn-success" @click="editCategory(category)"><i class="fas fa-edit"></i>&nbsp;Edit</button>
                   <button class="btn btn-danger ms-2" @click="deleteCategory(category.id)"><i class="fas fa-trash-alt"></i>&nbsp;Delete</button>
               </td>
           </tr>
@@ -98,6 +98,12 @@
         } catch (error) {
           console.error("There was an error deleting the category:", error);
         }
+      },
+      editCategory(category){
+        this.$router.push({ 
+          name: 'EditCategory', 
+          params: { id: category.id } 
+        });
       }
     }
   };

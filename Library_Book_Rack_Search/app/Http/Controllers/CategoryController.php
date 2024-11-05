@@ -59,4 +59,9 @@ class CategoryController extends Controller
         ]);
     }
 
+    public function getCategory(Request $request){
+        $category = Category::findOrFail($request->id);
+
+        return response()->json(['category' => $category]);
+    }
 }

@@ -46,7 +46,7 @@ Route::get('/getAllCategory',[CategoryController::class, 'getAllCategory']);
 Route::put('/updateCategory',[CategoryController::class, 'updateCategory']);
 Route::post('/createCategory',[CategoryController::class, 'createCategory']);
 Route::delete('/deleteCategory/{id}',[CategoryController::class, 'deleteCategory']);
-
+Route::get('/getCategory/{id}',[CategoryController::class, 'getCategory']);
 
 //Record API
 Route::get('/getAllRecord',[RecordController::class, 'getAllRecord']);
