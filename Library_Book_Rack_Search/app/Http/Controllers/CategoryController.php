@@ -8,43 +8,55 @@ use App\Models\Category;
 
 class CategoryController extends Controller
 {
-    public function getAllCategory(){
+    public function getAllCategory()
+    {
+        $categories = Category::all();
 
-        return Category::all();
-
+        return response()->json([
+            'data' => $categories,
+            'success' => true,
+        ]);
     }
 
-    public function createCategory(Request $request){
 
-        $request->validated([
-
-            'name'=>'nullable'
-
+    public function createCategory(Request $request)
+    {
+        $validatedData = $request->validate([
+            'name' => 'nullable|string'
         ]);
 
-        return Category::create($request->all());
+        Category::create($validatedData);
 
+        return response()->json(['success'=>true]);
     }
 
-    public function updateCategory(Request $request,$id){
-
+    public function updateCategory(Request $request, $id)
+    {
         $category = Category::findOrFail($id);
 
-        $request->validated([
-
-            'name'=>'nullable'
-
+        $validatedData = $request->validate([
+            'name' => 'nullable|string'
         ]);
 
-        $category->update($request->all());
+        $category->update($validatedData);
 
-        return $category;
-
+        return response()->json([
+            'success' => true,
+            'data' => $category,
+            'message' => 'Category updated successfully'
+        ]);
     }
 
-    public function deleteCategory($id){
 
-        return Category::destroy($id);
+    public function deleteCategory($id)
+    {
+        $category = Category::findOrFail($id);
+        $category->delete();
 
+        return response()->json([
+            'success' => true,
+            'message' => 'Category deleted successfully'
+        ]);
     }
+
 }

@@ -10,7 +10,11 @@ class RecordController extends Controller
 {
     public function getAllRecord(){
 
-        return Record::All();
+        $record =  Record::All();
+
+        return response()->json([
+            'success'=> true,
+        ]);
 
     }
 
@@ -18,21 +22,28 @@ class RecordController extends Controller
 
         $record = Record::findOrFail($id);
 
-        $request->validated([
+        $validated = $request->validated([
 
             'remark'=>'nullable',
 
         ]);
 
-        $record->update($request->all());
+        $record->update($validated);
 
-        return $record;
+        return response()->json([
+            'success'=> true,
+        ]);
 
     }
 
     public function deleteRecord($id){
 
-        return Record::destroy($id);
+        $record = Record::findOrFail($id);
 
+        $record->delete();
+
+        return response()->json([
+            'success'=>true,
+        ]);
     }
 }

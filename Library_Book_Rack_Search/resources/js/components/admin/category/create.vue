@@ -30,7 +30,7 @@ export default {
         async submit() {
             try {
                 await axios.post('/api/createCategory', this.form);
-                
+
                 this.$router.push('/api/category'); // Redirect to the category page after adding
             } catch (error) {
                 console.error('Error adding category:', error);

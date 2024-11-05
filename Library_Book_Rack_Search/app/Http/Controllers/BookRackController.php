@@ -10,13 +10,18 @@ class BookRackController extends Controller
 {
     public function getAllRack(){
 
-        return Book_Rack::all();
+        $bookRack = Book_Rack::all();
+
+        return response()->json([
+            'data' => $bookRack,
+            'success' => true,
+        ]);
 
     }
 
     public function createRack(Request $request){
 
-        $request->validated([
+        $validated = $request->validated([
 
             'rack_layer' => 'nullable',
             'floor' => 'nullable',
@@ -24,7 +29,11 @@ class BookRackController extends Controller
 
         ]);
 
-        return Book_Rack::create($request->all());
+        Book_Rack::create($validated);
+
+        return response()->json([
+            'success'=>true,
+        ]);
 
     }
 
@@ -32,7 +41,7 @@ class BookRackController extends Controller
 
         $book_rack = Book_Rack::findOrFail($id);
 
-        $request->validated([
+        $validated = $request->validated([
 
             'rack_layer' => 'nullable',
             'floor' => 'nullable',
@@ -40,14 +49,20 @@ class BookRackController extends Controller
 
         ]);
 
-        $book_rack->update($request->all());
+        $book_rack->update($validated);
 
         return $book_rack;
     }
 
     public function deleteRack($id){
 
-        return Book_Rack::destroy($id);
+        $bookRack = Book_Rack::findOrFail($id);
+
+        $bookRack->delete();
+
+        return response()->json([
+            'success'=> true,
+        ]);
 
     }
 }

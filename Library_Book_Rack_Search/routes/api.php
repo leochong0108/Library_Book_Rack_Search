@@ -31,24 +31,24 @@ Route::get('/getAllBook',[BookController::class, 'getAllBook']);
 Route::get('/getBookByInput/{input}', [BookController::class, 'search']);
 Route::post('/createBook',[BookController::class, 'createBook']);
 Route::put('/updateBook',[BookController::class, 'updateBook']);
-Route::delete('/deleteBook',[BookController::class, 'deleteBook']);
+Route::delete('/deleteBook/{id}',[BookController::class, 'deleteBook']);
 
 
 //Book Rack API
 Route::get('/getAllRack',[BookRackController::class, 'getAllRack']);
 Route::put('/updateRack',[BookRackController::class, 'updateRack']);
 Route::post('/createRack',[BookRackController::class, 'createRack']);
-Route::delete('/deleteRack',[BookRackController::class, 'deleteRack']);
+Route::delete('/deleteRack/{id}',[BookRackController::class, 'deleteRack']);
 
 
 //Category API
 Route::get('/getAllCategory',[CategoryController::class, 'getAllCategory']);
 Route::put('/updateCategory',[CategoryController::class, 'updateCategory']);
 Route::post('/createCategory',[CategoryController::class, 'createCategory']);
-Route::delete('/deleteCategory',[CategoryController::class, 'deleteCategory']);
+Route::delete('/deleteCategory/{id}',[CategoryController::class, 'deleteCategory']);
 
 
 //Record API
 Route::get('/getAllRecord',[RecordController::class, 'getAllRecord']);
 Route::put('/updateRecord',[RecordController::class, 'updateRecord']);
-Route::delete('/deleteRecord',[RecordController::class, 'deleteRecord']);
+Route::delete('/deleteRecord/{id}',[RecordController::class, 'deleteRecord']);
