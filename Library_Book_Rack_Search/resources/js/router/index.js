@@ -9,7 +9,15 @@ import AdminDashboard from '../components/admin/dashboard.vue';
 import Category from '../components/admin/category/index.vue';
 import CreateCategory from '../components/admin/category/create.vue';
 
-const routes = [
+// User
+import UserLayout from '../components/user/layout.vue';
+import Home from '../components/user/home.vue';
+import Search from '../components/user/search.vue';
+import Service from '../components/user/service.vue';
+import AboutUs from '../components/user/about_us.vue';
+import ContactUs from '../components/user/contact_us.vue';
+
+const adminRoutes = [
   //  { path: '/', component: Home },
    {
     path: '/api',
@@ -43,6 +51,48 @@ const routes = [
       // Add more child routes as needed
     ]
   },
+];
+
+// User Routes
+const userRoutes = [
+  {
+    path: '/api/home',
+    component: UserLayout, // Use UserLayout as the parent component
+    children: [
+      {
+        path: '',
+        name: 'Home',
+        component: Home,
+      },
+      {
+        path: '/api/search',
+        name: 'Search',
+        component: Search,
+      },
+      {
+        path: '/api/service',
+        name: 'Service',
+        component: Service,
+      },
+      {
+        path: '/api/about-us',
+        name: 'AboutUs',
+        component: AboutUs,
+      },
+      {
+        path: '/api/contact-us',
+        name: 'ContactUs',
+        component: ContactUs,
+      },
+      // Add other user routes here
+    ],
+  },
+];
+
+// Combine Routes
+const routes = [
+  ...adminRoutes,
+  ...userRoutes,
 ];
 
 const router = createRouter({
