@@ -32,6 +32,7 @@ Route::get('/getBookByInput/{input}', [BookController::class, 'search']);
 Route::post('/createBook',[BookController::class, 'createBook']);
 Route::put('/updateBook',[BookController::class, 'updateBook']);
 Route::delete('/deleteBook/{id}',[BookController::class, 'deleteBook']);
+Route::post('/rentBook/{id}', [BookController::class, 'rentBook']);
 
 
 //Book Rack API
