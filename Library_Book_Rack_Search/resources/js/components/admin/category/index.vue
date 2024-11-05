@@ -30,8 +30,8 @@
           <tr v-for="(category, index) in categories" :key="category.id">
               <th scope="row">{{ index + 1 }}</th>
               <td>
-                  {{ category.Name }}
-                  <button class="btn btn-secondary btn-sm ms-1" @click="copyToClipboard(category.Name, index)"> <i :class="copyIcon(index)"></i></button>
+                  {{ category.name }}
+                  <button class="btn btn-secondary btn-sm ms-1" @click="copyToClipboard(category.name, index)"> <i :class="copyIcon(index)"></i></button>
               </td>
               <td>
                   <button class="btn btn-success" @click="editCategory(category.id)"><i class="fas fa-edit"></i>&nbsp;Edit</button>
@@ -42,7 +42,7 @@
       </table>
     </div>
 </template>
-  
+
   <script>
   import axios from 'axios';
 
@@ -70,7 +70,7 @@
         this.loading = true;
         try {
           const response = await axios.get('/api/getAllCategory');
-          this.categories = response.data;
+          this.categories = response.data.data;
         } catch (error) {
           console.error("There was an error fetching categories:", error);
         } finally {
@@ -105,4 +105,3 @@
   <style scoped>
 
   </style>
-  

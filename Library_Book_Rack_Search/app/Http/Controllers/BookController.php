@@ -10,7 +10,12 @@ class BookController extends Controller
 {
     public function getAllBook(){
 
-        return Book::all();
+        $books = Book::all();
+
+        return response()->json([
+            'data' => $books,
+            'success' => true,
+        ]);
     }
 
 
@@ -45,7 +50,7 @@ class BookController extends Controller
 
     public function createBook(Request $request){
 
-        $request->validated([
+        $validated = $request->validated([
             'category_id'=>'nullable',
             'book_rack_id'=>'nullable',
             'rack_layer'=>'nullable',
@@ -58,7 +63,9 @@ class BookController extends Controller
             'duration'=>'nullable',
         ]);
 
-        return Book::create($request->all());
+        Book::create($validated);
+
+        return response()->json(['success'=>true]);
 
     }
 
@@ -66,7 +73,7 @@ class BookController extends Controller
     {
         $book = Book::findOrFail($id);
 
-        $request->validated([
+        $validated = $request->validated([
 
             'category_id'=>'nullable',
             'book_rack_id'=>'nullable',
@@ -81,15 +88,22 @@ class BookController extends Controller
 
         ]);
 
-        $book->update($request->all());
+        $book->update($validated);
 
-        return $book;
+        return response()->json([
+            'success' => true,
+        ]);
 
     }
 
     public function deleteBook($id){
 
-        return Book::destroy($id);
+        $book = Book::findOrFail($id);
+        $book->delete();
+
+        return response()->json([
+            'success' => true,
+        ]);
 
     }
 
