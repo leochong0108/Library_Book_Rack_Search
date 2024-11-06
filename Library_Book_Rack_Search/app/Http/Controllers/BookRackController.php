@@ -4,13 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Book_Rack;
+use App\Models\bookracks;
 
 class BookRackController extends Controller
 {
     public function getAllRack(){
 
-        $bookRack = Book_Rack::all();
+        $bookRack = bookracks::all();
 
         return response()->json([
             'data' => $bookRack,
@@ -21,7 +21,7 @@ class BookRackController extends Controller
 
     public function createRack(Request $request){
 
-        $validated = $request->validated([
+        $validated = $request->validate([
 
             'rack_layer' => 'nullable',
             'floor' => 'nullable',
@@ -29,7 +29,7 @@ class BookRackController extends Controller
 
         ]);
 
-        Book_Rack::create($validated);
+        bookracks::create($validated);
 
         return response()->json([
             'success'=>true,
@@ -39,9 +39,9 @@ class BookRackController extends Controller
 
     public function updateRack(Request $request, $id){
 
-        $book_rack = Book_Rack::findOrFail($id);
+        $book_rack = bookracks::findOrFail($id);
 
-        $validated = $request->validated([
+        $validated = $request->validate([
 
             'rack_layer' => 'nullable',
             'floor' => 'nullable',
@@ -56,7 +56,7 @@ class BookRackController extends Controller
 
     public function deleteRack($id){
 
-        $bookRack = Book_Rack::findOrFail($id);
+        $bookRack = bookracks::findOrFail($id);
 
         $bookRack->delete();
 

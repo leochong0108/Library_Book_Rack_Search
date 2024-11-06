@@ -53,7 +53,7 @@ class BookController extends Controller
 
     public function createBook(Request $request){
 
-        $validated = $request->validated([
+        $validated = $request->validate([
             'category_id'=>'nullable',
             'book_rack_id'=>'nullable',
             'rack_layer'=>'nullable',
@@ -76,7 +76,7 @@ class BookController extends Controller
     {
         $book = Book::findOrFail($id);
 
-        $validated = $request->validated([
+        $validated = $request->validate([
 
             'category_id'=>'nullable',
             'book_rack_id'=>'nullable',

@@ -4,9 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Book_Rack extends Model
+class bookracks extends Model
 {
-
     protected $fillable = [
         'rack_layer',
         'floor',

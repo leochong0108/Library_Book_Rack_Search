@@ -9,7 +9,7 @@
 <script>
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-    
+
 export default {
     name: 'App',
     setup() {
@@ -17,7 +17,7 @@ export default {
 
         onMounted(() => {
             const isAuthenticated = !!localStorage.getItem('access_token');
-            const userRole = 'user'; // localStorage.getItem('user_role')
+            const userRole = 'admin'; // localStorage.getItem('user_role')
 
             if (isAuthenticated) {
                 if (userRole === 'admin') {

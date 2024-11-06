@@ -26,8 +26,8 @@ class Book extends Model
         return $this->belongsTo('App\Models\Category');
     }
 
-    public function book_rack(){
-        return $this->belongsTo('App\Models\Book_Rack');
+    public function bookRack(){
+        return $this->belongsTo('App\Models\BookRack');
     }
 
     public function records(){

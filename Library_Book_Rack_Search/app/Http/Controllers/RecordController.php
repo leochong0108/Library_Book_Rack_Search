@@ -14,6 +14,7 @@ class RecordController extends Controller
 
         return response()->json([
             'success'=> true,
+            'data'=> $record,
         ]);
 
     }
@@ -22,7 +23,7 @@ class RecordController extends Controller
 
         $record = Record::findOrFail($id);
 
-        $validated = $request->validated([
+        $validated = $request->validate([
 
             'remark'=>'nullable',
 

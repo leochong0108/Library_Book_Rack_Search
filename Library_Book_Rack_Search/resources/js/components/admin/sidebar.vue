@@ -11,7 +11,7 @@
           <router-link to="/api/book" class="nav-link text-dark" active-class="active">Book</router-link>
         </li>
         <li class="nav-item">
-          <router-link to="/api/book-rack" class="nav-link text-dark" active-class="active">Book Rack</router-link>
+          <router-link to="/api/rack" class="nav-link text-dark" active-class="active">Book Rack</router-link>
         </li>
         <li class="nav-item">
           <router-link to="/api/record" class="nav-link text-dark" active-class="active">Record</router-link>
@@ -20,13 +20,13 @@
       </ul>
     </div>
   </template>
-  
+
   <script>
   export default {
     name: 'AdminSidebar'
   };
   </script>
-  
+
   <style scoped>
   .sidebar {
     width: 250px;
@@ -34,4 +34,3 @@
     height: 100%;
   }
   </style>
-  

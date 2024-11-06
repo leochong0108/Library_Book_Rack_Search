@@ -9,6 +9,8 @@ import AdminDashboard from '../components/admin/dashboard.vue';
 import Category from '../components/admin/category/index.vue';
 import CreateCategory from '../components/admin/category/create.vue';
 import EditCategory from '../components/admin/category/edit.vue';
+import rackHome from '../components/admin/bookRack/rackHome.vue';
+import recordHome from '../components/admin/record/recordHome.vue';
 
 // User
 import UserLayout from '../components/user/layout.vue';
@@ -54,6 +56,16 @@ const adminRoutes = [
         name: 'EditCategory',
         component: EditCategory,
         props: true
+      },
+      {
+        path: '/api/rack',
+        name: 'rackHome',
+        component: rackHome,
+      },
+      {
+        path: '/api/record',
+        name: 'recordHome',
+        component: recordHome,
       },
       // Add more child routes as needed
     ]
