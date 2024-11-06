@@ -11,7 +11,7 @@
           <router-link to="/api/book" class="nav-link text-dark" active-class="active">Book</router-link>
         </li>
         <li class="nav-item" :class="{ current: isActive('/api/rack') }">
-          <router-link to="/api/book-rack" class="nav-link text-dark" active-class="active">Book Rack</router-link>
+          <router-link to="/api/rack" class="nav-link text-dark" active-class="active">Book Rack</router-link>
         </li>
         <li class="nav-item" :class="{ current: isActive('/api/record') }">
           <router-link to="/api/record" class="nav-link text-dark" active-class="active">Record</router-link>
