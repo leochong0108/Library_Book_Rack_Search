@@ -6,9 +6,13 @@ import AdminLogin from '../components/admin/login.vue';
 import AdminRegister from '../components/admin/register.vue';
 import AdminLayout from '../components/admin/layout.vue';
 import AdminDashboard from '../components/admin/dashboard.vue';
+
 import Category from '../components/admin/category/index.vue';
 import CreateCategory from '../components/admin/category/create.vue';
 import EditCategory from '../components/admin/category/edit.vue';
+
+import Book from '../components/admin/book/index.vue';
+import CreateBook from '../components/admin/book/create.vue';
 
 // User
 import UserLayout from '../components/user/layout.vue';
@@ -54,6 +58,16 @@ const adminRoutes = [
         name: 'EditCategory',
         component: EditCategory,
         props: true
+      },
+      {
+        path: '/api/book', // Path for Book
+        name: 'Book',
+        component: Book,
+      },
+      {
+          path: '/api/book/create', // Path for Add Book
+          name: 'CreateBook',
+          component: CreateBook,
       },
       // Add more child routes as needed
     ]

@@ -7,13 +7,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Book;
 use App\Models\Record;
+use App\Models\Category;
 use Carbon\Carbon;
 
 class BookController extends Controller
 {
     public function getAllBook(){
 
-        $books = Book::all();
+        $books = Book::with('category')->orderBy('created_at', 'desc')->get();
 
         return response()->json([
             'data' => $books,
@@ -53,7 +54,7 @@ class BookController extends Controller
 
     public function createBook(Request $request){
 
-        $validated = $request->validated([
+        $validated = $request->validate([
             'category_id'=>'nullable',
             'book_rack_id'=>'nullable',
             'rack_layer'=>'nullable',
@@ -76,7 +77,7 @@ class BookController extends Controller
     {
         $book = Book::findOrFail($id);
 
-        $validated = $request->validated([
+        $validated = $request->validate([
 
             'category_id'=>'nullable',
             'book_rack_id'=>'nullable',
@@ -162,4 +163,14 @@ class BookController extends Controller
          ]);
     }
 
+    public function getBookCategory(){
+        $categories = Category::select('id','name')->get()->map(function($category){
+            return [
+                'id' => $category->id,
+                'name' => $category->name
+            ];
+        });
+
+        return response()->json(['categories' => $categories]);
+    }
 }

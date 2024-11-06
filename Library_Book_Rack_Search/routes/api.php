@@ -34,6 +34,7 @@ Route::put('/updateBook/{id}',[BookController::class, 'updateBook']);
 Route::delete('/deleteBook/{id}',[BookController::class, 'deleteBook']);
 Route::post('/rentBook/{id}', [BookController::class, 'rentBook']);
 Route::get('/findBookByScan/{id}',[BookController::class, 'findBookByScan']);
+Route::get('/getBookCategory', [BookController::class, 'getBookCategory']);
 
 
 //Book Rack API
