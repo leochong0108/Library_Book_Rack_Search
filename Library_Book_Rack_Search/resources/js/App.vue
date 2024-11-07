@@ -17,7 +17,7 @@ export default {
 
         onMounted(() => {
             const isAuthenticated = !!localStorage.getItem('access_token');
-            const userRole = 'admin'; // localStorage.getItem('user_role')
+            const userRole = 'user'; // localStorage.getItem('user_role')
 
             if (isAuthenticated) {
                 if (userRole === 'admin') {
