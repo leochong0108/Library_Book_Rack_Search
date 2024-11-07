@@ -9,6 +9,7 @@ use App\Models\Book;
 use App\Models\Record;
 use App\Models\Category;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
@@ -60,12 +61,20 @@ class BookController extends Controller
             'rack_layer'=>'nullable',
             'floor'=>'nullable',
             'location_id'=>'nullable',
-            'image'=>'nullable',
+            'image' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048', // Validate image files
             'title'=>'nullable',
             'author'=>'nullable',
             'description'=>'nullable',
             'duration'=>'nullable',
         ]);
+
+        if($request->image){
+            $image = $request->image;
+            $filename = time().'_'.$image->getClientOriginalName();
+            $path = $image->storeAs('images', $filename, 'public');  
+        
+            $validated['image'] = $filename;
+        }
 
         Book::create($validated);
 
@@ -103,6 +112,11 @@ class BookController extends Controller
     public function deleteBook($id){
 
         $book = Book::findOrFail($id);
+
+        if($book->image && Storage::disk('public')->exists('images/'.$book->image)){
+            Storage::disk('public')->delete('images/'.$book->image);
+        }
+
         $book->delete();
 
         return response()->json([

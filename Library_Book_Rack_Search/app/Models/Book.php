@@ -22,6 +22,8 @@ class Book extends Model
         'duration',
     ];
 
+    protected $appends = ['image_path'];
+
     public function category(){
         return $this->belongsTo('App\Models\Category');
     }
@@ -34,4 +36,11 @@ class Book extends Model
         return $this->hasMany('App\Models\Record');
     }
 
+    public function getImagePathAttribute(){
+        if(!$this->image){
+            return null;
+        }
+
+        return '/storage/images/'.$this->image;
+    }
 }

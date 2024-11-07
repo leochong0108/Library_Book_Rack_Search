@@ -35,7 +35,10 @@
           <tr v-for="(book, index) in books" :key="book.id">
             <th scope="row">{{ index + 1 }}</th>
             <td>
-              <span class="text-capitalize">{{ book.title ? book.title : '-'}}</span>
+              <div class="d-flex flex-column gap-1">
+                <img class="rounded-3" :src="book.image_path" v-if="book.image_path" alt="Book Image" width="150" height="150" />
+                <span class="text-capitalize">{{ book.title ? book.title : '-'}}</span>
+              </div>
             </td>
             <td>{{ book.category ? book.category.name : '-' }}</td>
             <td>{{ book.author ? book.author : '-' }}</td>

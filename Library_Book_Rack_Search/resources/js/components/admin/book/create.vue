@@ -66,7 +66,23 @@
         methods: {
             async submit() {
                 try {
-                    await axios.post('/api/createBook', this.form);
+                    const formData = new FormData();
+
+                    formData.append('title', this.form.title);
+                    formData.append('author', this.form.author);
+                    formData.append('description', this.form.description);
+                    formData.append('duration', this.form.duration);
+                    formData.append('category_id', this.form.category_id);
+
+                    if(this.form.image){
+                        formData.append('image', this.form.image);
+                    }
+
+                    await axios.post('/api/createBook', formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    });
                     
                     this.$router.push('/api/book'); // Redirect to the category page after adding
                 } catch (error) {
