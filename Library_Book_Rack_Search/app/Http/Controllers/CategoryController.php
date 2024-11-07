@@ -22,7 +22,7 @@ class CategoryController extends Controller
     public function createCategory(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'nullable|string'
+            'name' => 'required|string'
         ]);
 
         Category::create($validatedData);
@@ -35,7 +35,7 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
 
         $validatedData = $request->validate([
-            'name' => 'nullable|string'
+            'name' => 'required|string'
         ]);
 
         $category->update($validatedData);

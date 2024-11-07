@@ -3,14 +3,14 @@
       <h1>Category Page</h1>
 
       <router-link to="/api/category/create" class="btn btn-primary">
-          <i class="fas fa-plus-circle"></i> Add New
+        <i class="fas fa-plus-circle"></i> Add New
       </router-link>
     </div>
 
     <div v-if="loading" class="text-center" style="padding: 13rem;">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
     </div>
 
     <div v-if="!loading && !categories.length">
@@ -30,12 +30,12 @@
           <tr v-for="(category, index) in categories" :key="category.id">
               <th scope="row">{{ index + 1 }}</th>
               <td>
-                  {{ category.name }}
-                  <button class="btn btn-secondary btn-sm ms-1" @click="copyToClipboard(category.name, index)"> <i :class="copyIcon(index)"></i></button>
+                {{ category.name }}
+                <button class="btn btn-secondary btn-sm ms-1" @click="copyToClipboard(category.name, index)"> <i :class="copyIcon(index)"></i></button>
               </td>
               <td>
-                  <button class="btn btn-success" @click="editCategory(category)"><i class="fas fa-edit"></i>&nbsp;Edit</button>
-                  <button class="btn btn-danger ms-2" @click="deleteCategory(category.id)"><i class="fas fa-trash-alt"></i>&nbsp;Delete</button>
+                <button class="btn btn-success" @click="editCategory(category)"><i class="fas fa-edit"></i>&nbsp;Edit</button>
+                <button class="btn btn-danger ms-2" @click="deleteCategory(category)"><i class="fas fa-trash-alt"></i>&nbsp;Delete</button>
               </td>
           </tr>
         </tbody>
@@ -48,18 +48,14 @@
 
   export default {
     components: {
-        //
+      //
     },
     name: 'Category',
     data() {
         return {
-            isShow: false,
-            form: {
-                name: null
-            },
-            categories: [],
-            copiedIndex: null,
-            loading: false
+          categories: [],
+          copiedIndex: null,
+          loading: false
         };
     },
     async mounted() {
@@ -91,12 +87,33 @@
       copyIcon(index) {
         return this.copiedIndex === index ? 'fas fa-copy' : 'far fa-copy'; // Determine icon class
       },
-      async deleteCategory(id) {
-        try {
-          await axios.delete(`/api/deleteCategory/${id}`);
-          await this.getData();
-        } catch (error) {
-          console.error("There was an error deleting the category:", error);
+      async deleteCategory(category) {
+        const result = await this.$swal.fire({
+          title: 'Are you sure?',
+          text: `You want to delete ${category.name ? category.name : ''}!`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'Cancel'
+        });
+
+        if(result.isConfirmed){
+          try {
+            await axios.delete(`/api/deleteCategory/${category.id}`);
+
+            this.$swal.fire({
+                title: 'Deleted successfully',
+                icon: 'success',
+                confirmButtonColor: '#007bff',
+                confirmButtonText: 'Ok'
+            });
+
+            await this.getData();
+          } catch (error) {
+            console.error("There was an error deleting the category:", error); 
+          }
         }
       },
       editCategory(category){

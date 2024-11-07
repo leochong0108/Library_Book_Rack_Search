@@ -13,10 +13,11 @@
             <div class="form-group mb-3">
                 <label class="mb-3">Category Name</label>
                 <input type="text" class="form-control" v-model="form.name" placeholder="Enter category name"/>
+                <span v-if="errors.name" class="text-danger">{{ errors.name[0] }}</span>
             </div>
     
             <div class="form-group text-end">
-                <button class="btn btn-primary" @click="submit">Submit</button>
+                <button class="btn btn-primary" @click="submit" :disabled="is_submit">Submit</button>
             </div>
         </div>
     </div>
@@ -32,7 +33,9 @@ export default {
             loading: true,
             form: {
                 name: ''
-            }
+            },
+            errors: {},
+            is_submit: false
         };
     },
     async created() {
@@ -52,11 +55,16 @@ export default {
     },
     methods: {
         async submit() {
+
+            if (this.is_submit) return;
+
+            this.is_submit = true;
+
             try {
                 await axios.put(`/api/updateCategory/${this.id}`, this.form);
 
                 this.$swal.fire({
-                    title: 'Update successful',
+                    title: 'Updated successfully',
                     icon: 'success',
                     confirmButtonColor: '#007bff',
                     confirmButtonText: 'Ok'
@@ -64,7 +72,14 @@ export default {
 
                 this.$router.push('/api/category'); // Redirect to the category page after adding
             } catch (error) {
-                console.error('Error updating category:', error);
+                if(error.response && error.response.status === 422){
+                    const errors = error.response.data.errors;
+                    this.errors = errors;
+                }else{
+                    console.error('Error updating category:', error);
+                }
+            } finally {
+                this.is_submit = false; // Reset after submission is complete
             }
         }
     }
