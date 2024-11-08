@@ -24,66 +24,70 @@
 </template>
 
 <script>
-import axios from 'axios';
-
-export default {
-    props: ['id'],
-    data() {
-        return {
-            loading: true,
-            form: {
-                name: ''
-            },
-            errors: {},
-            is_submit: false
-        };
-    },
-    async created() {
-        if (this.id) {
-            this.loading = true; // Set loading state to true
-
-            try {
-                const response = await axios.get(`/api/getCategory/${this.id}`);
-                const category = response.data.category;
-                this.form.name = category.name;
-            } catch (error) {
-                console.error("There was an error fetching category:", error);
-            } finally {
-                this.loading = false; // Set loading state to false
-            }
-        }
-    },
-    methods: {
-        async submit() {
-
-            if (this.is_submit) return;
-
-            this.is_submit = true;
-
-            try {
-                await axios.put(`/api/updateCategory/${this.id}`, this.form);
-
-                this.$swal.fire({
-                    title: 'Updated successfully',
-                    icon: 'success',
-                    confirmButtonColor: '#007bff',
-                    confirmButtonText: 'Ok'
-                });
-
-                this.$router.push('/api/category'); // Redirect to the category page after adding
-            } catch (error) {
-                if(error.response && error.response.status === 422){
-                    const errors = error.response.data.errors;
-                    this.errors = errors;
-                }else{
-                    console.error('Error updating category:', error);
+    import { ref, reactive, onMounted } from 'vue';
+    import { useRouter } from 'vue-router';
+    import axios from 'axios';
+    import Swal from 'sweetalert2';
+    
+    export default {
+        props: ['id'],
+        setup(props) {
+            const loading = ref(true);
+            const form = reactive({ 
+                name: '' 
+            });
+            const errors = reactive({});
+            const is_submit = ref(false);
+            const router = useRouter();
+    
+            const fetchCategory = async () => {
+                try {
+                    const response = await axios.get(`/api/getCategory/${props.id}`);
+                    form.name = response.data.category.name;
+                } catch (error) {
+                    console.error("There was an error fetching category:", error);
+                } finally {
+                    loading.value = false;
                 }
-            } finally {
-                this.is_submit = false; // Reset after submission is complete
-            }
+            };
+    
+            onMounted(fetchCategory);
+    
+            const submit = async () => {
+                if (is_submit.value) return;
+                is_submit.value = true;
+    
+                try {
+                    await axios.put(`/api/updateCategory/${props.id}`, form);
+    
+                    Swal.fire({
+                        title: 'Updated successfully',
+                        icon: 'success',
+                        confirmButtonColor: '#007bff',
+                        confirmButtonText: 'Ok'
+                    });
+    
+                    router.push('/api/category');
+                } catch (error) {
+                    if (error.response && error.response.status === 422) {
+                        Object.assign(errors, error.response.data.errors);
+                    } else {
+                        console.error('Error updating category:', error);
+                    }
+                } finally {
+                    is_submit.value = false;
+                }
+            };
+    
+            return {
+                loading,
+                form,
+                errors,
+                is_submit,
+                submit
+            };
         }
-    }
-};
+    };
 </script>
 
 <style scoped>
