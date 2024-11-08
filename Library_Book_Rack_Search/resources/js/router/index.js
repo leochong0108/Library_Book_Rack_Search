@@ -22,6 +22,7 @@ import Search from '../components/user/search.vue';
 import Service from '../components/user/service.vue';
 import AboutUs from '../components/user/about_us.vue';
 import ContactUs from '../components/user/contact_us.vue';
+import bookDetail from '../components/user/bookDetail.vue';
 
 const adminRoutes = [
   //  { path: '/', component: Home },
@@ -115,6 +116,11 @@ const userRoutes = [
         path: '/api/contact-us',
         name: 'ContactUs',
         component: ContactUs,
+      },
+      {
+        path: '/api/bookDetail',
+        name: 'bookDetail',
+        component: bookDetail,
       },
       // Add other user routes here
     ],
