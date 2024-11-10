@@ -124,11 +124,11 @@ const userRoutes = [
         name: 'ContactUs',
         component: ContactUs,
       },
-      // {
-      //   path: '/api/bookDetail',
-      //   name: 'bookDetail',
-      //   component: bookDetail,
-      // },
+      {
+        path: '/api/bookDetail',
+        name: 'bookDetail',
+        component: bookDetail,
+      },
       // Add other user routes here
     ],
   },
