@@ -27,11 +27,14 @@
     .sidebar {
       width: 250px;
       position: fixed;
-      height: 100%;
+      height: calc(100% - 56px); /* Account for fixed navbar height */
+      margin-top: 56px; /* Space for navbar */
       padding-top: 1rem;
     }
+    
     .main-content {
-      margin-left: 250px; /* Same width as sidebar */
+      margin-left: 250px; /* Sidebar width */
+      margin-top: 56px; /* Space for navbar */
       padding: 2rem;
     }
-    </style>
+</style>
