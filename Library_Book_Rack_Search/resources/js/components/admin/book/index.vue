@@ -113,10 +113,10 @@
       };
 
       const editBook = (book) => {
-        // router.push({
-        //   name: 'EditBook',
-        //   params: { id: book.id }
-        // });
+        router.push({
+          name: 'EditBook',
+          params: { id: book.id }
+        });
       };
   
       const showBarcode = (book) => {

@@ -14,6 +14,7 @@ import Book from '../components/admin/book/index.vue';
 import CreateBook from '../components/admin/book/create.vue';
 import rackHome from '../components/admin/bookRack/rackHome.vue';
 import recordHome from '../components/admin/record/recordHome.vue';
+import EditBook from '../components/admin/book/edit.vue';
 
 // User
 import UserLayout from '../components/user/layout.vue';
@@ -81,6 +82,12 @@ const adminRoutes = [
         name: 'recordHome',
         component: recordHome,
       },
+      {
+        path: '/api/book/:id/edit', // Path for Edit Book
+        name: 'EditBook',
+        component: EditBook,
+        props: true
+      },
       // Add more child routes as needed
     ]
   },
@@ -117,11 +124,11 @@ const userRoutes = [
         name: 'ContactUs',
         component: ContactUs,
       },
-      {
-        path: '/api/bookDetail',
-        name: 'bookDetail',
-        component: bookDetail,
-      },
+      // {
+      //   path: '/api/bookDetail',
+      //   name: 'bookDetail',
+      //   component: bookDetail,
+      // },
       // Add other user routes here
     ],
   },

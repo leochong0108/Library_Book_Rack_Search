@@ -93,13 +93,25 @@ class BookController extends Controller
             'rack_layer'=>'nullable',
             'floor'=>'nullable',
             'location_id'=>'nullable',
-            'image'=>'nullable',
+            'image' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048', 
             'title'=>'nullable',
             'author'=>'nullable',
             'description'=>'nullable',
             'duration'=>'nullable',
 
         ]);
+
+        if($request->image){
+            $image = $request->image;
+            $filename = time().'_'.$image->getClientOriginalName();
+            $path = $image->storeAs('images', $filename, 'public');  
+        
+            if($book->image && Storage::disk('public')->exists('images/'.$book->image)){
+                Storage::disk('public')->delete('images/'.$book->image);
+            }
+
+            $validated['image'] = $filename;
+        }
 
         $book->update($validated);
 
@@ -186,5 +198,11 @@ class BookController extends Controller
         });
 
         return response()->json(['categories' => $categories]);
+    }
+ 
+    public function getBook(Request $request){
+        $book = Book::findOrFail($request->id);
+
+        return response()->json(['book' => $book]);
     }
 }
