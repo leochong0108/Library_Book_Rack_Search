@@ -55,3 +55,6 @@ Route::get('/getCategory/{id}',[CategoryController::class, 'getCategory']);
 Route::get('/getAllRecord',[RecordController::class, 'getAllRecord']);
 Route::put('/updateRecord/{id}',[RecordController::class, 'updateRecord']);
 Route::delete('/deleteRecord/{id}',[RecordController::class, 'deleteRecord']);
+
+//Dashboard API
+Route::get('/getDashboardData', [HomeController::class, 'getDashboardData']);
