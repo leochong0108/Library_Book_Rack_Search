@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router';
-//import PostList from '../components/PostList.vue';
 
 // Admin
 import AdminLogin from '../components/admin/login.vue';
@@ -98,6 +97,11 @@ const userRoutes = [
         component: Home,
       },
       {
+        path: '/api/bookDetail',
+        name: 'bookDetail',
+        component: bookDetail,
+      },
+      {
         path: '/api/search',
         name: 'Search',
         component: Search,
@@ -116,11 +120,6 @@ const userRoutes = [
         path: '/api/contact-us',
         name: 'ContactUs',
         component: ContactUs,
-      },
-      {
-        path: '/api/bookDetail',
-        name: 'bookDetail',
-        component: bookDetail,
       },
       // Add other user routes here
     ],
