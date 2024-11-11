@@ -22,7 +22,7 @@
         <thead>
           <tr>
             <th scope="col">#</th>
-            <th scope="col">Name</th>
+            <th scope="col">Title</th>
             <th scope="col">Category</th>
             <th scope="col">Author</th>
             <th scope="col">Duration (days)</th>
@@ -49,8 +49,10 @@
               <span class="text-danger" v-else><span class="fas fa-circle"></span>&nbsp;No Available</span>
             </td>
             <td>
-              <button class="btn btn-success" @click="editBook(book)"><i class="fas fa-edit"></i>&nbsp;Edit</button>
+              <button class="btn btn-primary" @click="showDetail(book)"><i class="fas fa-search"></i></button>
+              <button class="btn btn-success ms-2" @click="editBook(book)"><i class="fas fa-edit"></i>&nbsp;Edit</button>
               <button class="btn btn-danger ms-2" @click="deleteBook(book)"><i class="fas fa-trash-alt"></i>&nbsp;Delete</button>
+              <button class="btn btn-secondary ms-2" @click="showBarcode(book)"><i class="fas fa-barcode"></i></button>
             </td>
           </tr>
         </tbody>
@@ -59,37 +61,31 @@
 </template>
 
 <script>
+  import { ref, onMounted } from 'vue';
+  import { useRouter } from 'vue-router';
   import axios from 'axios';
-
+  import Swal from 'sweetalert2';
+  
   export default {
-    components: {
-      //
-    },
-    name: 'Book',
-    data() {
-        return {
-          books: [],
-          copiedIndex: null,
-          loading: false
-        };
-    },
-    async mounted() {
-      await this.getData();
-    },
-    methods: {
-      async getData(){
-        this.loading = true;
+    setup() {
+      const books = ref([]);
+      const loading = ref(false);
+      const router = useRouter();
+
+      const getData = async () => {
+        loading.value = true;
         try {
           const response = await axios.get('/api/getAllBook');
-          this.books = response.data.data;
+          books.value = response.data.data;
         } catch (error) {
           console.error("There was an error fetching books:", error);
         } finally {
-          this.loading = false;
+          loading.value = false;
         }
-      },
-      async deleteBook(book) {
-        const result = await this.$swal.fire({
+      };
+  
+      const deleteBook = async (book) => {
+        const result = await Swal.fire({
           title: 'Are you sure?',
           text: `You want to delete ${book.title ? book.title : ''}!`,
           icon: 'warning',
@@ -99,22 +95,51 @@
           confirmButtonText: 'Yes',
           cancelButtonText: 'Cancel'
         });
-
-        if(result.isConfirmed){
+  
+        if (result.isConfirmed) {
           try {
             await axios.delete(`/api/deleteBook/${book.id}`);
-            await this.getData();
+            Swal.fire({
+              title: 'Deleted successfully',
+              icon: 'success',
+              confirmButtonColor: '#007bff',
+              confirmButtonText: 'Ok'
+            });
+            await getData();
           } catch (error) {
-            console.error("There was an error deleting the book:", error);  
+            console.error("There was an error deleting the book:", error);
           }
         }
-      },
-      editBook(book){
-        // this.$router.push({ 
-        //   name: 'EditBook', 
-        //   params: { id: book.id } 
-        // });
+      };
+
+      const editBook = (book) => {
+        router.push({
+          name: 'EditBook',
+          params: { id: book.id }
+        });
+      };
+  
+      const showBarcode = (book) => {
+        // show barcode
+      };
+
+      const showDetail = (book) => {
+        // show book detail
       }
+
+      onMounted(() => {
+        getData();
+      });
+  
+      return {
+        books,
+        loading,
+        getData,
+        deleteBook,
+        editBook,
+        showBarcode,
+        showDetail
+      };
     }
   };
 </script>

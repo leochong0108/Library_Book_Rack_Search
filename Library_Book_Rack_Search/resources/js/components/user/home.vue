@@ -227,6 +227,10 @@ export default {
         padding: 10px;
     }
 
+    .carousel__slide::marker{
+        content: none;
+    }
+
     #reader {
         width: 100%;
         height: auto;

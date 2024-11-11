@@ -16,12 +16,12 @@
 
         <div class="form-group mb-3">
             <label class="mb-2">Book Description</label>
-            <input type="text" class="form-control" v-model="form.description" />
+            <input type="text" class="form-control" v-model="form.description" placeholder="Enter book description" />
         </div>
 
         <div class="form-group mb-3">
             <label class="mb-2">Book Author</label>
-            <input type="text" class="form-control" v-model="form.author" />
+            <input type="text" class="form-control" v-model="form.author" placeholder="Enter book author"/>
         </div>
 
         <div class="form-group mb-3">
@@ -38,68 +38,102 @@
         </div>
 
         <div class="form-group text-end">
-            <button class="btn btn-primary" @click="submit">Submit</button>
+            <button class="btn btn-primary" @click="submit" :disabled="is_submit">Submit</button>
         </div>
     </div>
 </template>
 
 <script>
+    import { ref, reactive, onMounted } from 'vue';
+    import { useRouter } from 'vue-router';
     import axios from 'axios';
-    
+    import Swal from 'sweetalert2';
+
     export default {
-        data() {
-            return {
-                form: {
-                    title: '',
-                    duration: '',
-                    author: '',
-                    image: null,
-                    description: '',
-                    category_id: '',
-                },
-                categories: []
+        setup() {
+            const form = reactive({
+                title: '',
+                description: '',
+                author: '',
+                image: null,
+                duration: '',
+                category_id: ''
+            });
+    
+            const categories = ref([]);
+            const is_submit = ref(false);
+            const errors = ref({});
+            const router = useRouter();
+    
+            const getCategory = async () => {
+                try {
+                    const res = await axios.get('/api/getBookCategory');
+                    categories.value = res.data.categories;
+                } catch (error) {
+                    console.error('Error fetching categories:', error);
+                }
             };
-        },
-        mounted(){
-            this.getCategory();
-        },
-        methods: {
-            async submit() {
+    
+            const handleFileUpload = (event) => {
+                form.image = event.target.files[0];
+            };
+    
+            const submit = async () => {
+                if (is_submit.value) return;
+    
+                is_submit.value = true;
+                errors.value = {};
+    
                 try {
                     const formData = new FormData();
-
-                    formData.append('title', this.form.title);
-                    formData.append('author', this.form.author);
-                    formData.append('description', this.form.description);
-                    formData.append('duration', this.form.duration);
-                    formData.append('category_id', this.form.category_id);
-
-                    if(this.form.image){
-                        formData.append('image', this.form.image);
+    
+                    formData.append('title', form.title);
+                    formData.append('author', form.author);
+                    formData.append('description', form.description);
+                    formData.append('duration', form.duration);
+                    formData.append('category_id', form.category_id);
+    
+                    if (form.image) {
+                        formData.append('image', form.image);
                     }
-
+    
                     await axios.post('/api/createBook', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',
                         },
                     });
-                    
-                    this.$router.push('/api/book'); // Redirect to the category page after adding
+    
+                    Swal.fire({
+                        title: 'Added successfully',
+                        icon: 'success',
+                        confirmButtonColor: '#007bff',
+                        confirmButtonText: 'Ok'
+                    });
+    
+                    router.push('/api/book');
                 } catch (error) {
-                    console.error('Error adding book:', error);
+                    if (error.response && error.response.status === 422) {
+                        errors.value = error.response.data.errors;
+                    } else {
+                        console.error('Error adding book:', error);
+                    }
+                } finally {
+                    is_submit.value = false;
                 }
-            },
-            handleFileUpload(event){
-                this.form.image = event.target.files[0];
-            },
-            async getCategory(){
-                try {
-                    const res = await axios.get('/api/getBookCategory');
-                    this.categories = res.data.categories;
-                } catch (error) {
-                    console.error('Error fetching categories:', error);
-                }
-            }
+            };
+    
+            onMounted(() => {
+                getCategory();
+            });
+    
+            return {
+                form,
+                categories,
+                is_submit,
+                errors,
+                submit,
+                handleFileUpload
+            };
         }
     };
     </script>

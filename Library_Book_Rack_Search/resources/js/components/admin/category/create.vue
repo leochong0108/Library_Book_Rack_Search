@@ -17,49 +17,61 @@
 </template>
 
 <script>
-import axios from 'axios';
-
-export default {
-    data() {
-        return {
-            form: {
+    import { ref, reactive } from 'vue';
+    import { useRouter } from 'vue-router';
+    import axios from 'axios';
+    import Swal from 'sweetalert2';
+    
+    export default {
+        setup(props, { emit }) {
+            const form = reactive({
                 name: ''
-            },
-            errors: {},
-            is_submit: false
-        };
-    },
-    methods: {
-        async submit() {
-
-            if (this.is_submit) return;
-
-            this.is_submit = true;
-
-            try {
-                await axios.post('/api/createCategory', this.form);
-
-                this.$swal.fire({
-                    title: 'Added successfully',
-                    icon: 'success',
-                    confirmButtonColor: '#007bff',
-                    confirmButtonText: 'Ok'
-                });
-
-                this.$router.push('/api/category'); // Redirect to the category page after adding
-            } catch (error) {
-                if(error.response && error.response.status === 422){
-                    const errors = error.response.data.errors;
-                    this.errors = errors;
-                }else{
-                    console.error('Error adding category:', error);
+            });
+            const errors = reactive({});
+            const is_submit = ref(false);
+            const router = useRouter();
+    
+            const submit = async () => {
+                if (is_submit.value) return;
+    
+                is_submit.value = true;
+    
+                try {
+                    await axios.post('/api/createCategory', form);
+    
+                    Swal.fire({
+                        title: 'Added successfully',
+                        icon: 'success',
+                        confirmButtonColor: '#007bff',
+                        confirmButtonText: 'Ok'
+                    });
+    
+                    form.name = '';
+                    for (let key in errors) errors[key] = null;
+    
+                    router.push('/api/category');
+                } catch (error) {
+                    if (error.response && error.response.status === 422) {
+                        const errorData = error.response.data.errors;
+                        Object.keys(errorData).forEach(key => {
+                            errors[key] = errorData[key];
+                        });
+                    } else {
+                        console.error('Error adding category:', error);
+                    }
+                } finally {
+                    is_submit.value = false;
                 }
-            } finally {
-                this.is_submit = false; // Reset after submission is complete
-            }
+            };
+    
+            return {
+                form,
+                errors,
+                is_submit,
+                submit
+            };
         }
-    }
-};
+    };
 </script>
 
 <style scoped>

@@ -43,54 +43,52 @@
     </div>
 </template>
 
-  <script>
+<script>
+  import { ref, onMounted } from 'vue';
+  import { useRouter } from 'vue-router';
   import axios from 'axios';
-
+  import Swal from 'sweetalert2';
+  
   export default {
-    components: {
-      //
-    },
     name: 'Category',
-    data() {
-        return {
-          categories: [],
-          copiedIndex: null,
-          loading: false
-        };
-    },
-    async mounted() {
-      await this.getData();
-    },
-    methods: {
-      async getData(){
-        this.loading = true;
+    setup() {
+      const categories = ref([]);
+      const copiedIndex = ref(null);
+      const loading = ref(false);
+      const router = useRouter();
+  
+      const getData = async () => {
+        loading.value = true;
         try {
           const response = await axios.get('/api/getAllCategory');
-          this.categories = response.data.data;
+          categories.value = response.data.data;
         } catch (error) {
           console.error("There was an error fetching categories:", error);
         } finally {
-          this.loading = false;
+          loading.value = false;
         }
-      },
-      async copyToClipboard(text, index) {
+      };
+  
+      const copyToClipboard = async (text, index) => {
         try {
           await navigator.clipboard.writeText(text);
-          this.copiedIndex = index; // Set the copied index
+          copiedIndex.value = index;
           setTimeout(() => {
-              this.copiedIndex = null; // Reset after 2 seconds
+            copiedIndex.value = null;
           }, 2000);
         } catch (err) {
           console.error('Failed to copy: ', err);
         }
-      },
-      copyIcon(index) {
-        return this.copiedIndex === index ? 'fas fa-copy' : 'far fa-copy'; // Determine icon class
-      },
-      async deleteCategory(category) {
-        const result = await this.$swal.fire({
+      };
+  
+      const copyIcon = (index) => {
+        return copiedIndex.value === index ? 'fas fa-copy' : 'far fa-copy';
+      };
+  
+      const deleteCategory = async (category) => {
+        const result = await Swal.fire({
           title: 'Are you sure?',
-          text: `You want to delete ${category.name ? category.name : ''}!`,
+          text: `You want to delete ${category.name || ''}!`,
           icon: 'warning',
           showCancelButton: true,
           confirmButtonColor: '#d33',
@@ -98,33 +96,42 @@
           confirmButtonText: 'Yes',
           cancelButtonText: 'Cancel'
         });
-
-        if(result.isConfirmed){
+  
+        if (result.isConfirmed) {
           try {
             await axios.delete(`/api/deleteCategory/${category.id}`);
-
-            this.$swal.fire({
-                title: 'Deleted successfully',
-                icon: 'success',
-                confirmButtonColor: '#007bff',
-                confirmButtonText: 'Ok'
+            Swal.fire({
+              title: 'Deleted successfully',
+              icon: 'success',
+              confirmButtonColor: '#007bff',
+              confirmButtonText: 'Ok'
             });
-
-            await this.getData();
+            await getData();
           } catch (error) {
-            console.error("There was an error deleting the category:", error); 
+            console.error("There was an error deleting the category:", error);
           }
         }
-      },
-      editCategory(category){
-        this.$router.push({ 
-          name: 'EditCategory', 
-          params: { id: category.id } 
-        });
-      }
+      };
+  
+      const editCategory = (category) => {
+        router.push({ name: 'EditCategory', params: { id: category.id } });
+      };
+  
+      onMounted(getData);
+  
+      return {
+        categories,
+        copiedIndex,
+        loading,
+        copyToClipboard,
+        copyIcon,
+        deleteCategory,
+        editCategory
+      };
     }
   };
-  </script>
-  <style scoped>
+</script>
 
-  </style>
+<style scoped>
+
+</style>

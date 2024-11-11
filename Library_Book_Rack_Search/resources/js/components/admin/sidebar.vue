@@ -38,4 +38,8 @@
     position: fixed;
     height: 100%;
   }
+
+  .current{
+    background-color: lavender;
+  }
   </style>
