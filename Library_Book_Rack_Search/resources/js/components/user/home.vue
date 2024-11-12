@@ -38,7 +38,14 @@
                 <carousel :autoplay="0" :value="currentIndex" :numVisible="1" :numScroll="1" showIndicators="false">
                     <slide v-for="(book, index) in books" :key="book.id" v-show="currentIndex === index">
                         <div class="carousel-content">
-                            <img :src="book.image" alt="Book Cover" class="book-image" @click="viewDetail(book)">
+                            <router-link :to="`/api/bookDetail/${book.id}`">
+                                <img
+                                    :src="book.image_path"
+                                    alt="Book Cover"
+                                    class="book-image"
+                                    style="cursor: pointer;"
+                                >
+                            </router-link>
                             <h5 class="mt-3 mb-0">{{ book.title }}</h5>
                         </div>
                     </slide>
@@ -75,32 +82,7 @@ export default {
             currentIndex: 0,
             search: null,
             html5QrCode: null,
-            books: [
-                {
-                    id: 1,
-                    title: 'The Great Gatsby',
-                    author: 'F. Scott Fitzgerald',
-                    description: 'A novel about the American dream.',
-                    image: 'https://m.media-amazon.com/images/I/91oy4zw56KL._AC_UF350,350_QL50_.jpg',
-                    publishedYear: 1925,
-                },
-                {
-                    id: 2,
-                    title: 'To Kill a Mockingbird',
-                    author: 'Harper Lee',
-                    description: 'A novel about racial injustice in the South.',
-                    image: 'https://m.media-amazon.com/images/I/91oy4zw56KL._AC_UF350,350_QL50_.jpg',
-                    publishedYear: 1960,
-                },
-                {
-                    id: 3,
-                    title: '1984',
-                    author: 'George Orwell',
-                    description: 'A dystopian novel set in a totalitarian society.',
-                    image: 'https://img-cdn.pixlr.com/image-generator/history/65bb506dcb310754719cf81f/ede935de-1138-4f66-8ed7-44bd16efc709/medium.webp',
-                    publishedYear: 1949,
-                },
-            ],
+            books: [],
         };
     },
 
@@ -141,12 +123,17 @@ export default {
             }
         },
 
-        getBooks() {
-            // Fetch books logic
+        async getBooks() {
+            try {
+                const response = await axios.get('/api/getAllBook');
+                this.books = response.data.data;
+            } catch (error) {
+                console.error('Failed to fetch books:', error);
+            }
         },
 
         viewDetail(book) {
-            // View book detail logic
+            this.$router.push({ name: 'bookDetail', params: { id: book.id } });
         },
 
         onScanSuccess(decodedText) {

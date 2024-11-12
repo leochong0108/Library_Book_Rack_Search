@@ -104,7 +104,7 @@ const userRoutes = [
         component: Home,
       },
       {
-        path: '/api/bookDetail',
+        path: '/api/bookDetail/:id',
         name: 'bookDetail',
         component: bookDetail,
       },

@@ -20,6 +20,7 @@ class Book extends Model
         'author',
         'description',
         'duration',
+        'is_available',
     ];
 
     protected $appends = ['image_path'];

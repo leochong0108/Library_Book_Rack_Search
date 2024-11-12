@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Models\Book;
 use App\Models\Record;
 use App\Models\Category;
@@ -71,8 +72,8 @@ class BookController extends Controller
         if($request->image){
             $image = $request->image;
             $filename = time().'_'.$image->getClientOriginalName();
-            $path = $image->storeAs('images', $filename, 'public');  
-        
+            $path = $image->storeAs('images', $filename, 'public');
+
             $validated['image'] = $filename;
         }
 
@@ -93,7 +94,7 @@ class BookController extends Controller
             'rack_layer'=>'nullable',
             'floor'=>'nullable',
             'location_id'=>'nullable',
-            'image' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048', 
+            'image' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048',
             'title'=>'nullable',
             'author'=>'nullable',
             'description'=>'nullable',
@@ -104,8 +105,8 @@ class BookController extends Controller
         if($request->image){
             $image = $request->image;
             $filename = time().'_'.$image->getClientOriginalName();
-            $path = $image->storeAs('images', $filename, 'public');  
-        
+            $path = $image->storeAs('images', $filename, 'public');
+
             if($book->image && Storage::disk('public')->exists('images/'.$book->image)){
                 Storage::disk('public')->delete('images/'.$book->image);
             }
@@ -199,7 +200,7 @@ class BookController extends Controller
 
         return response()->json(['categories' => $categories]);
     }
- 
+
     public function getBook(Request $request){
         $book = Book::findOrFail($request->id);
 
