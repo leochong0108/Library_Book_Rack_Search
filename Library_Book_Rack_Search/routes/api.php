@@ -21,6 +21,7 @@ Route::get('/', [HomeController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout']);
+    Route::post('/rentBook/{id}', [BookController::class, 'rentBook']);
 });
 
 Route::get('/user', function (Request $request) {
@@ -34,7 +35,6 @@ Route::get('/getBookByInput/{input}', [BookController::class, 'search']);
 Route::post('/createBook',[BookController::class, 'createBook']);
 Route::post('/updateBook/{id}',[BookController::class, 'updateBook']);
 Route::delete('/deleteBook/{id}',[BookController::class, 'deleteBook']);
-Route::post('/rentBook/{id}', [BookController::class, 'rentBook']);
 Route::get('/findBookByScan/{id}',[BookController::class, 'findBookByScan']);
 Route::get('/getBookCategory', [BookController::class, 'getBookCategory']);
 Route::get('/getBook/{id}',[BookController::class, 'getBook']);

@@ -9,6 +9,7 @@ class Record extends Model
 
     protected $fillable = [
         'book_id',
+        'user_id',
         'remark',
         'action',
         'expired_at'
@@ -16,5 +17,9 @@ class Record extends Model
 
     public function book(){
         return $this->belongsTo('App\Models\Book');
+    }
+
+    public function user(){
+        return $this->belongsTo('App\Models\User');
     }
 }

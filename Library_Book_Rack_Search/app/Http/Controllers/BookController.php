@@ -11,6 +11,7 @@ use App\Models\Record;
 use App\Models\Category;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class BookController extends Controller
 {
@@ -140,6 +141,10 @@ class BookController extends Controller
 
     public function rentBook($id){
 
+        if(!$user = Auth::user()){
+            return response()->json(['success' => false]);
+        }
+
         DB::beginTransaction();
 
         try{
@@ -153,6 +158,7 @@ class BookController extends Controller
 
             Record::create([
                 'book_id' => $book->id,
+                'user_id' => $user->id,
                 'remark' => 'rented',
                 'action' => 'rent book',
                 'expired_at' => $expirationDate,

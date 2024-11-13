@@ -10,7 +10,7 @@ class RecordController extends Controller
 {
     public function getAllRecord(){
 
-        $record =  Record::All();
+        $record = Record::with('user','book')->get();
 
         return response()->json([
             'success'=> true,
