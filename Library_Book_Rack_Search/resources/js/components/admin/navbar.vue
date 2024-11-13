@@ -47,11 +47,17 @@ export default {
 
             if (result.isConfirmed) {
                 try {
-                    await axios.post('/api/logout', {});
+                    await axios.post('/api/logout', {}, {
+                      headers: {
+                        Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+                      }
+                    });
 
-                    if (localStorage.getItem('access_token')) {
-                      localStorage.removeItem('access_token');
-                    }
+                    ['access_token', 'user_role','user_data'].forEach(item => {
+                      if (localStorage.getItem(item)) {
+                        localStorage.removeItem(item);
+                      }
+                    });
 
                     await this.$swal.fire({
                         title: 'Logout successful',

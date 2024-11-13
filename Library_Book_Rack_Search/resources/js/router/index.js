@@ -23,6 +23,8 @@ import Service from '../components/user/service.vue';
 import AboutUs from '../components/user/about_us.vue';
 import ContactUs from '../components/user/contact_us.vue';
 import bookDetail from '../components/user/bookDetail.vue';
+import Login from '../components/user/login.vue';
+import Register from '../components/user/register.vue';
 
 const adminRoutes = [
   //  { path: '/', component: Home },
@@ -131,6 +133,16 @@ const userRoutes = [
       // Add other user routes here
     ],
   },
+  {
+    path: '/api/user/login',
+    name: 'Login',
+    component: Login,
+  },
+  {
+    path: '/api/user/register',
+    name: 'Register',
+    component: Register,
+  },
 ];
 
 // Combine Routes
@@ -142,6 +154,58 @@ const routes = [
 const router = createRouter({
     history: createWebHistory(),
     routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = !!localStorage.getItem('access_token');
+  const userRole = localStorage.getItem('user_role');
+  const is_user_logout = localStorage.getItem('is_user_logout') || false;
+
+  const publicRoutes = ['Login', 'Register', 'AdminLogin', 'AdminRegister'];
+
+  if (isAuthenticated) {
+
+    if (userRole === 'admin') {
+      // If the admin is already on the admin dashboard, allow navigation
+      if (to.name === 'Dashboard') {
+        return next();
+      }
+
+      // Redirect admin to dashboard if they're navigating to other routes
+      if (!to.path.startsWith('/api')) {
+        return next({ name: 'Dashboard' });
+      }
+
+      return next();
+    }
+
+    if (userRole === 'user') {
+      // If the user is already on the home page, allow navigation
+      if (to.name === 'Home') {
+        return next();
+      }
+
+      // Redirect users to home if they try to access admin routes
+      if (to.path.startsWith('/api')) {
+        return next();
+      }
+
+      return next(); // Allow navigation within user routes
+    }
+
+    return next(); // Proceed for other roles if defined
+  }
+
+  // If not authenticated, allow navigation to login, or redirect to login if trying to access a protected route
+  if (publicRoutes.includes(to.name)) {
+    return next();
+  }
+
+  if (!is_user_logout) {
+    return next({ name: 'Login' });
+  }
+
+  return next();
 });
 
 export default router;
