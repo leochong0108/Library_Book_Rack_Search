@@ -1,14 +1,16 @@
 <template>
 
-<div class="row" style="margin-right: 0px;">
+<div class ="container justify-content-center" style="margin: 100px;">
+    <div class="row" style="margin-right: 0px;">
         <div class="col-md-1"></div>
         <div class="col-md-10">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-5">
                         <img :src="books.image_path" alt="Book Image" class="img-fluid" v-if="books.image_path" width="250" height="500"/>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-5">
                         <h1 class="card-title" style="color:red">{{ books.title || 'Book Title' }}</h1>
                         <h6 class="card-text">{{ books.description || 'Description not available.' }}</h6>
                         <span class="text-success" v-if="books.is_available"><span class="fas fa-circle"></span>&nbsp;Available</span>
@@ -20,12 +22,15 @@
                             <dd>{{ books.description || 'Not specified' }}</dd>
                         </dl>
                         <hr />
-                        <button class="btn btn-danger" @click="rentBook(books.id)" v-if="!is_admin">Rent Now</button>
+                        <button class="btn btn-danger" :disabled="!books.is_available" @click="rentBook(books.id)" style="margin-right: 20px;" v-if="!is_admin">Rent Now</button>
+                        <button class="btn btn-danger" :disabled="books.is_available" @click="returnBook(books.id)">Return Now</button>
                     </div>
+                    <div class="col-md-1"></div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 </template>
 
@@ -85,13 +90,24 @@ export default {
                     confirmButtonColor: '#007bff',
                     confirmButtonText: 'Ok'
                 });
-                
+
                 //books.value = response.data.data;
             } catch (err) {
                 error.value = err.response?.data?.message || 'Error fetching books';
             }
             router.push('/api/home');
         };
+
+        const returnBook = async (id) => {
+            try {
+                const response = await axios.post(`/api/returnBook/${id}`);
+                Swal.fire('Updated!', 'return book completed', 'success');
+            } catch (err) {
+                error.value = err.response?.data?.message || 'Error return book'
+                Swal.fire('Error', err.response?.data?.message , 'error');
+            }
+            getBook();
+        }
 
 
         onMounted(() => {
@@ -107,6 +123,7 @@ export default {
             is_admin,
             getBook,
             rentBook,
+            returnBook,
         };
     }
 };
