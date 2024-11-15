@@ -25,6 +25,7 @@ import ContactUs from '../components/user/contact_us.vue';
 import bookDetail from '../components/user/bookDetail.vue';
 import Login from '../components/user/login.vue';
 import Register from '../components/user/register.vue';
+import BookList from '../components/user/book_list.vue';
 
 const adminRoutes = [
   //  { path: '/', component: Home },
@@ -129,6 +130,11 @@ const userRoutes = [
         path: '/api/contact-us',
         name: 'ContactUs',
         component: ContactUs,
+      },
+      {
+        path: '/api/book-list',
+        name: 'BookList',
+        component: BookList,
       },
       // Add other user routes here
     ],

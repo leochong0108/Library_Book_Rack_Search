@@ -236,6 +236,10 @@ class BookController extends Controller
 
     public function returnBook($id){
 
+        // if(!$user = Auth::user()){
+        //     return response()->json(['success' => false]);
+        // }
+
         DB::beginTransaction();
 
         try{
@@ -248,6 +252,7 @@ class BookController extends Controller
 
             Record::create([
                 'book_id' => $book->id,
+                // 'user_id' => $user->id,
                 'remark' => 'return',
                 'action' => 'return book',
             ]);
