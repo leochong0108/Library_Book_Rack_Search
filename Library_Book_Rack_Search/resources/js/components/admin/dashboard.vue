@@ -28,6 +28,26 @@
             <p>{{ countBook }}</p>
           </div>
         </div>
+
+        <div class="card" @click="goTo('rack')">
+          <div class="card-icon">
+            <i class="fas fa-boxes-stacked"></i>
+          </div>
+          <div class="card-info">
+            <h3>Book Racks</h3>
+            <p>{{ countBookRack }}</p>
+          </div>
+        </div>
+
+        <div class="card" @click="goTo('record')">
+          <div class="card-icon">
+            <i class="fas fa-clipboard-list"></i>
+          </div>
+          <div class="card-info">
+            <h3>Records</h3>
+            <p>{{ countRecord }}</p>
+          </div>
+        </div>
       </div>
     </div>
 </template>
@@ -42,6 +62,8 @@
     setup() {
       const countCategory = ref(null);
       const countBook = ref(null);
+      const countBookRack = ref(null);
+      const countRecord = ref(null);
       const loading = ref(false);
       const router = useRouter();
   
@@ -51,6 +73,8 @@
           const response = await axios.get('/api/getDashboardData');
           countCategory.value = response.data.count_category;
           countBook.value = response.data.count_book;
+          countBookRack.value = response.data.count_book_rack;
+          countRecord.value = response.data.count_record;
         } catch (error) {
           console.error("Failed to fetch data:", error);
         } finally {
@@ -70,6 +94,8 @@
         loading,
         countCategory,
         countBook,
+        countBookRack,
+        countRecord,
         goTo
       };
     }
