@@ -95,7 +95,7 @@ export default {
         const getData = async () => {
             loading.value = true;
             try {
-                const response = await axios.get('/api/getAllBook');
+                const response = await axios.get('/api/getAllBook?is_admin=true');
                 books.value = response.data.data;
             } catch (error) {
                 console.error("There was an error fetching books:", error);

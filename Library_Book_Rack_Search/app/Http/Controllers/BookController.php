@@ -15,9 +15,13 @@ use Illuminate\Support\Facades\Auth;
 
 class BookController extends Controller
 {
-    public function getAllBook(){
-
+    public function getAllBook(Request $request){
         $books = Book::with('category')->orderBy('created_at', 'desc')->get();
+
+        if($request->is_admin){
+            return response()->json(['data' => $books, 'success' => true]);
+        }
+
         $new_arrival_books = $books->take(3)->toArray();
         $remaining_books = $books->slice(3)->values()->toArray();
 
