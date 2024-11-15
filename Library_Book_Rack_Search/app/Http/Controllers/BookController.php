@@ -206,4 +206,44 @@ class BookController extends Controller
 
         return response()->json(['book' => $book]);
     }
+
+    public function returnBook($id){
+
+        DB::beginTransaction();
+
+        try{
+            $book = Book::findOrFail($id);
+
+            if($book->is_available){
+                return response()->json(['success' => false, 'message' => 'Book in stock']);
+            }
+
+
+            Record::create([
+                'book_id' => $book->id,
+                'remark' => 'return',
+                'action' => 'return book',
+            ]);
+
+            $book->update(['is_available'=> true]);
+
+            DB::commit();
+
+            return response()->json([
+                'success'=>true
+            ]);
+        }
+        catch(\Exception $e){
+
+            DB::rollBack();
+
+            return response()->json([
+
+                'success'=>false,
+                'message' => 'An error occurred while renting the book: ' . $e->getMessage()
+
+            ], 500);
+
+        }
+    }
 }

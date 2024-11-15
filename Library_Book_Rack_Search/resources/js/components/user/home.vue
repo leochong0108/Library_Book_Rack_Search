@@ -13,7 +13,6 @@
             </div>
         </div>
 
-        <!-- Modal for Scanner -->
         <div class="modal fade" id="scannerModal" tabindex="-1" aria-labelledby="scannerModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -99,69 +98,96 @@ export default {
         this.stopScanner();
     },
 
-    methods: {
-        submitSearch() {
-            if (!this.search) {
-                return false;
-            }
-            // Submit search logic
-        },
+methods: {
+    submitSearch() {
+        if (!this.search) {
+            return false;
+        }
+        // Submit search logic
+    },
 
-        nextSlide() {
-            if (this.currentIndex < this.books.length - 1) {
-                this.currentIndex++;
-            } else {
-                this.currentIndex = 0; // Loop back to the first slide
-            }
-        },
+    nextSlide() {
+        if (this.currentIndex < this.books.length - 1) {
+            this.currentIndex++;
+        } else {
+            this.currentIndex = 0; // Loop back to the first slide
+        }
+    },
 
-        prevSlide() {
-            if (this.currentIndex > 0) {
-                this.currentIndex--;
-            } else {
-                this.currentIndex = this.books.length - 1;
-            }
-        },
+    prevSlide() {
+        if (this.currentIndex > 0) {
+            this.currentIndex--;
+        } else {
+            this.currentIndex = this.books.length - 1;
+        }
+    },
 
-        async getBooks() {
-            try {
-                const response = await axios.get('/api/getAllBook');
-                this.books = response.data.data;
-            } catch (error) {
-                console.error('Failed to fetch books:', error);
-            }
-        },
+    async getBooks() {
+        try {
+            const response = await axios.get('/api/getAllBook');
+            this.books = response.data.data;
+        } catch (error) {
+            console.error('Failed to fetch books:', error);
+        }
+    },
 
-        viewDetail(book) {
-            this.$router.push({ name: 'bookDetail', params: { id: book.id } });
-        },
+    viewDetail(book) {
+        this.$router.push({ name: 'bookDetail', params: { id: book.id } });
+    },
 
-        onScanSuccess(decodedText) {
-            this.stopScanner();
+    onScanSuccess(decodedText) {
+        console.log("Scanned code:", decodedText); // Logging the scanned code
+        this.stopScanner();
+
+        // Verify the format of `decodedText` and adjust if necessary
+        if (decodedText) {
             this.$router.push({ name: 'bookDetail', params: { id: decodedText } });
-        },
+        } else {
+            console.error("Scanned text is empty or undefined.");
+        }
+    },
 
-        startScanner() {
-            this.html5QrCode = new Html5Qrcode("reader");
-            const config = {
-                fps: 10,
-                qrbox: 350,
-            };
-            this.html5QrCode.start(
-                { facingMode: "environment" },
-                config,
-                this.onScanSuccess
-            ).catch(err => console.error(err));
-        },
+    onScanSuccess(decodedText) {
+    console.log("Scanned code:", decodedText); // Log the scanned code
 
-        stopScanner() {
-            if (this.html5QrCode) {
-                this.html5QrCode.stop().catch(err => console.error(err)).finally(() => {
-                    this.html5QrCode = null;
-                });
-            }
-        },
+    this.stopScanner();
+
+    if (decodedText) {
+        // Close the modal
+        const modal = document.getElementById('scannerModal');
+        const bootstrapModal = bootstrap.Modal.getInstance(modal);
+        bootstrapModal.hide();
+
+            this.$router.push({ name: 'bookDetail', params: { id: decodedText } });
+
+    } else {
+        console.error("Scanned text is empty or undefined.");
     }
+},
+
+    startScanner() {
+        console.log("Starting scanner...");
+        this.html5QrCode = new Html5Qrcode("reader");
+        const config = {
+            fps: 30,
+            qrbox: 500,
+        };
+        this.html5QrCode.start(
+            { facingMode: "environment" },
+            config,
+            this.onScanSuccess
+        ).catch(err => console.error("Scanner failed to start:", err));
+    },
+
+    stopScanner() {
+        if (this.html5QrCode) {
+            console.log("Stopping scanner...");
+            this.html5QrCode.stop().catch(err => console.error("Scanner failed to stop:", err)).finally(() => {
+                this.html5QrCode = null;
+            });
+        }
+    },
+}
 };
 </script>
 
