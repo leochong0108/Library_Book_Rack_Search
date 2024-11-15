@@ -20,7 +20,7 @@
                             <dd>{{ books.description || 'Not specified' }}</dd>
                         </dl>
                         <hr />
-                        <button class="btn btn-danger" @click="rentBook(books.id)">Rent Now</button>
+                        <button class="btn btn-danger" @click="rentBook(books.id)" v-if="!is_admin">Rent Now</button>
                     </div>
                 </div>
             </div>
@@ -41,6 +41,7 @@ export default {
         const error = ref(null);
         const router = useRouter();
         const route = useRoute();
+        const is_admin = ref(false);
 
         const getBook = async () => {
             const bookId = route.params.id;
@@ -54,9 +55,37 @@ export default {
         };
 
         const rentBook = async (id) => {
+
+            if (!localStorage.getItem('access_token')) {
+                const result = await Swal.fire({
+                    title: 'Reminder',
+                    text: 'Please login first!',
+                    icon: 'info',
+                    confirmButtonColor: '#007bff',
+                    confirmButtonText: 'Login Now'
+                });
+
+                if (result.isConfirmed) {
+                    router.push('/api/user/login');
+                }
+                return;
+            }
+
             try {
-                const response = await axios.post(`/api/rentBook/${id}`);
+                const response = await axios.post(`/api/rentBook/${id}`, {}, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('access_token')}`
+                    }
+                });
                 debugger;
+
+                Swal.fire({
+                    title: 'Rented successfully',
+                    icon: 'success',
+                    confirmButtonColor: '#007bff',
+                    confirmButtonText: 'Ok'
+                });
+                
                 //books.value = response.data.data;
             } catch (err) {
                 error.value = err.response?.data?.message || 'Error fetching books';
@@ -66,12 +95,16 @@ export default {
 
 
         onMounted(() => {
+            if (localStorage.getItem('user_role') == 'admin') {
+                is_admin.value = true;
+            }
             getBook();
         });
 
         return {
             books,
             error,
+            is_admin,
             getBook,
             rentBook,
         };

@@ -42,7 +42,8 @@
             return {
                 form: {
                     usernameOrEmail: null,
-                    password: null
+                    password: null,
+                    role: 'admin'
                 },
                 isShowPassword: false,
                 validationErrors: {}
@@ -67,6 +68,7 @@
                     });
 
                     localStorage.setItem('access_token', response.data.access_token);
+                    localStorage.setItem('user_role', response.data.user_role);
 
                     // Set the Authorization header for future requests
                     axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`;

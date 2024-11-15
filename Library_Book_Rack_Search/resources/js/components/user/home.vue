@@ -251,6 +251,19 @@ methods: {
         margin-bottom: 20px;
     }
 
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        background-color: darkgreen; /* Set a solid background color */
+        opacity: 1 !important; /* Make the icon fully opaque */
+        border-radius: 50%; /* Optional: to make the icon circular */
+        padding: 10px; /* Optional: add padding to increase the clickable area */
+    }
+
+    .carousel-control-prev-icon::before,
+    .carousel-control-next-icon::before {
+        font-size: 30px; /* Adjust the size of the icon */
+        color: white; /* Set the color of the arrow icon */
+    }
 </style>
 
 <style>

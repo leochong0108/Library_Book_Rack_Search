@@ -12,13 +12,16 @@ use App\Http\Controllers\LoginController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-//Admin
-Route::get('/', [HomeController::class, 'index']);
+//Login & Register API (Admin & User)
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/login', [LoginController::class, 'login']);
 
+//Admin
+Route::get('/', [HomeController::class, 'index']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout']);
+    Route::post('/rentBook/{id}', [BookController::class, 'rentBook']);
 });
 
 Route::get('/user', function (Request $request) {

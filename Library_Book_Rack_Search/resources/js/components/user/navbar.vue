@@ -24,23 +24,87 @@
             </li>
           </ul>
   
-          <button class="btn btn-sign-in">Sign In</button>
-          <button class="btn btn-dark">Register</button>
+          <router-link to="/api/user/login" class="btn btn-sign-in" v-if="!is_login">Sign In</router-link>
+          <button class="btn btn-primary" @click="logout" v-else>Log Out</button>
+          <router-link to="/api/user/register" class="btn btn-dark" v-if="!is_login">Register</router-link>
         </div>
       </div>
     </nav>
-  </template>
+</template>
 
-  <script>
+<script>
+  import { ref, reactive, onMounted } from 'vue';
+  import { useRouter } from 'vue-router';
+  import axios from 'axios';
+  import Swal from 'sweetalert2';
+
   export default {
-    name: 'Footer',
-    data() {
-        return {
-          //
-        };
-    },
-    methods: {
-      //
+    setup(){
+      const is_login = ref(false);
+      const router = useRouter();
+
+      const logout = async () => {
+        const result = await Swal.fire({
+          title: 'Are you sure?',
+          text: 'You want to logout!',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'Cancel'
+        });
+  
+        if (result.isConfirmed) {
+          try {
+            await axios.post('/api/logout', {}, {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+              }
+            });
+
+            ['access_token', 'user_role', 'user_data'].forEach(item => {
+              if (localStorage.getItem(item)) {
+                localStorage.removeItem(item);
+              }
+            });
+
+            localStorage.setItem('is_user_logout', true);
+
+            is_login.value = false;
+
+            router.replace({ path: router.currentRoute.value.fullPath });
+
+            await Swal.fire({
+              title: 'Logout successful',
+              icon: 'success',
+              confirmButtonColor: '#007bff',
+              confirmButtonText: 'Ok'
+            });
+            
+          } catch (error) {
+            console.error('Logout failed:', error);
+            Swal.fire({
+                title: 'Error',
+                text: 'Logout failed. Please try again.',
+                icon: 'error',
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Okay'
+            });
+          }
+        }
+      }
+
+      onMounted(async () => {
+        if (localStorage.getItem('access_token')) {
+          is_login.value = true;
+        }
+      });
+
+      return {
+        is_login,
+        logout
+      };
     }
   }; 
 </script>
