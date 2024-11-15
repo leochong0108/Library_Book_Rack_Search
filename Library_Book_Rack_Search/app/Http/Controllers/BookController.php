@@ -18,22 +18,39 @@ class BookController extends Controller
     public function getAllBook(){
 
         $books = Book::with('category')->orderBy('created_at', 'desc')->get();
+        $new_arrival_books = $books->take(3)->toArray();
+        $remaining_books = $books->slice(3)->values()->toArray();
 
         return response()->json([
-            'data' => $books,
+            'new_arrival_books' => $new_arrival_books,
+            'remaining_books' => $remaining_books,
             'success' => true,
         ]);
     }
 
 
-    public function search($input)
+    public function search(Request $request, $input)
     {
-        $Posts = Book::query()
-            ->where('title', 'like', '%' . $input . '%')
-            ->orWhere('category_id', $input)
-            ->get();
+        if($input === 'null' && !$request->category_id){
+            return response()->json(['message' => 'No search term or category provided'], 400);
+        }
 
-        return $Posts;
+        if($request->category_id){
+            $books = Book::where('category_id', $request->category_id)->get();
+        }else{
+            $category_ids = Category::where('name', 'like', '%' . $input . '%')->pluck('id');
+
+            $books = Book::query()
+                ->where('title', 'like', '%' . $input . '%')
+                ->orWhereIn('category_id', $category_ids)
+                ->get();
+        }
+
+        if ($books->isEmpty()) {
+            return response()->json(['message' => 'No books found'], 404);
+        }
+
+        return response()->json(['searched_books' => $books]);
     }
 
     public function searchByTitleOrId(Request $request)

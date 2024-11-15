@@ -4,7 +4,8 @@
             <h1 class="search-title">Search For Books</h1>
             <span class="text-muted search-description">Fill in the name or the code of the book.</span>
             <div class="d-flex align-items-center justify-content-center gap-3 mt-3">
-                <input type="text" v-model="search" class="form-control search-box">
+                <input type="text" v-model="search" class="form-control search-box" @input="capitalizeInput">
+                <v-select class="category-options" :options="categories" v-model="selectedCategory" label="name" :reduce="category => category.id" placeholder="Select a category"></v-select>
                 <button class="btn btn-dark" @click="submitSearch">Submit</button>
             </div>
             <h2>or</h2>
@@ -12,6 +13,28 @@
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#scannerModal">Start Scanner</button>
             </div>
         </div>
+
+        <div class="row" v-if="searched_books.length > 0 && (selectedCategory || search)">
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 d-flex justify-content-center" v-for="(book, index) in searched_books" :key="book.id">
+                <div class="text-center p-3">
+                    <router-link :to="`/api/bookDetail/${book.id}`">
+                        <img class="rounded-2 book-cover" :src="book.image_path" v-if="book.image_path" alt="Book Image" />
+                    </router-link>
+                    <h5 class="mt-3 text-capitalize mb-0">{{ book.title }}</h5>
+                </div>
+            </div>
+        </div>
+  
+        <div class="row" v-else-if="!is_empty_search && remaining_books.length > 0">
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 d-flex justify-content-center" v-for="(book, index) in remaining_books" :key="book.id">
+                <div class="text-center p-3">
+                    <router-link :to="`/api/bookDetail/${book.id}`">
+                        <img class="rounded-2 book-cover" :src="book.image_path" v-if="book.image_path" alt="Book Image" />
+                    </router-link>
+                    <h5 class="mt-3 text-capitalize mb-0">{{ book.title }}</h5>
+                </div>
+            </div>
+        </div>  
 
         <div class="modal fade" id="scannerModal" tabindex="-1" aria-labelledby="scannerModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -82,11 +105,32 @@ export default {
             search: null,
             html5QrCode: null,
             books: [],
+            searched_books: [],
+            categories: [],
+            remaining_books: [],
+            selectedCategory: '',
+            is_empty_search: false,
         };
+    },
+
+    watch: {
+        search(newSearch) {
+            if (!newSearch) {
+                this.searched_books = [];
+                this.is_empty_search = false
+            }
+        },
+        selectedCategory(newCategory) {
+            if (!newCategory) {
+                this.searched_books = [];
+                this.is_empty_search = false
+            }
+        }
     },
 
     mounted() {
         this.getBooks();
+        this.getBookCategory();
 
         // Modal event listeners for controlling the scanner
         const modal = document.getElementById('scannerModal');
@@ -99,11 +143,26 @@ export default {
     },
 
 methods: {
-    submitSearch() {
-        if (!this.search) {
+    async submitSearch() {
+        if (!this.search && !this.selectedCategory) {
+            this.searched_books = [];
             return false;
         }
-        // Submit search logic
+      
+        let url = `/api/getBookByInput/${this.search}`;
+        if (this.selectedCategory) {
+            url += `?category_id=${this.selectedCategory}`;
+        }
+
+        try {
+            const response = await axios.get(url);
+            this.searched_books = response.data.searched_books || [];
+            this.is_empty_search = false
+
+        } catch (error) {
+            this.is_empty_search = true
+            console.error("Error fetching books:", error);
+        }
     },
 
     nextSlide() {
@@ -125,7 +184,8 @@ methods: {
     async getBooks() {
         try {
             const response = await axios.get('/api/getAllBook');
-            this.books = response.data.data;
+            this.books = response.data.new_arrival_books;
+            this.remaining_books = response.data.remaining_books;
         } catch (error) {
             console.error('Failed to fetch books:', error);
         }
@@ -186,6 +246,20 @@ methods: {
                 this.html5QrCode = null;
             });
         }
+    },
+
+    async getBookCategory() {
+         
+        try {
+            const res = await axios.get('/api/getBookCategory');
+            this.categories = res.data.categories;
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+        }
+    },
+ 
+    capitalizeInput() {
+        this.search = this.search.replace(/\b\w/g, char => char.toUpperCase());
     },
 }
 };
@@ -263,6 +337,23 @@ methods: {
     .carousel-control-next-icon::before {
         font-size: 30px; /* Adjust the size of the icon */
         color: white; /* Set the color of the arrow icon */
+    }
+
+    .book-cover {
+        width: 100%;
+        height: 300px; /* Adjust the height as needed */
+        object-fit: cover; /* Ensures the image covers the set area without stretching */
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+    .text-capitalize{
+        text-transform: capitalize;
+    }
+
+    .category-options{
+        background-color: white;
+        width: 20%;
     }
 </style>
 
