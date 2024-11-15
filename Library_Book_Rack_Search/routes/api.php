@@ -35,7 +35,7 @@ Route::get('/getBookByInput/{input}', [BookController::class, 'search']);
 Route::post('/createBook',[BookController::class, 'createBook']);
 Route::post('/updateBook/{id}',[BookController::class, 'updateBook']);
 Route::delete('/deleteBook/{id}',[BookController::class, 'deleteBook']);
-Route::post('/rentBook/{id}', [BookController::class, 'rentBook']);
+//Route::post('/rentBook/{id}', [BookController::class, 'rentBook']);
 Route::post('/returnBook/{id}', [BookController::class, 'returnBook']);
 Route::get('/findBookByScan/{id}',[BookController::class, 'findBookByScan']);
 Route::get('/getBookCategory', [BookController::class, 'getBookCategory']);
