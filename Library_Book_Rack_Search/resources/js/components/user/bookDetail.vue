@@ -50,6 +50,16 @@
                             <dd>{{ books.category?.name || 'Unknown' }}</dd>
 
                             <dt>
+                                Library Floor
+                                <i
+                                    class="fas fa-info-circle info-icon"
+                                    @mouseenter="showTooltip('floor', $event)"
+                                    @mouseleave="hideTooltip"
+                                ></i>
+                            </dt>
+                            <dd>{{ books.floor || 'Not specified' }}</dd>
+
+                            <dt>
                                 Book Rack ID
                                 <i
                                     class="fas fa-info-circle info-icon"
@@ -68,16 +78,6 @@
                                 ></i>
                             </dt>
                             <dd>{{ books.rack_layer || 'Not specified' }}</dd>
-
-                            <dt>
-                                Library Floor
-                                <i
-                                    class="fas fa-info-circle info-icon"
-                                    @mouseenter="showTooltip('floor', $event)"
-                                    @mouseleave="hideTooltip"
-                                ></i>
-                            </dt>
-                            <dd>{{ books.floor || 'Not specified' }}</dd>
 
                             <dt>
                                 Position in Rack Layer

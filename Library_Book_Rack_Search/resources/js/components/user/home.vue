@@ -2,18 +2,18 @@
     <div class="search-area">
         <div class="text-center" style="margin-bottom: 10rem;">
             <h1 class="search-title">Search For Books</h1>
-            <span class="text-muted search-description">Fill in the name or the code of the book.</span>
+            <span class="text-muted search-description">Fill in the name or the category of the book.</span>
             <div class="d-flex align-items-center justify-content-center gap-3 mt-3">
-                <input type="text" v-model="search" class="form-control search-box" @input="capitalizeInput">
+                <input type="text" v-model="search" class="form-control search-box" @input="capitalizeInput" placeholder="Enter book name">
                 <v-select class="category-options" :options="categories" v-model="selectedCategory" label="name" :reduce="category => category.id" placeholder="Select a category"></v-select>
                 <button class="btn btn-dark" @click="submitSearch">Submit</button>
             </div>
             <h2>or</h2>
             <div class="d-flex align-items-center justify-content-center gap-3 mt-3">
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#scannerModal">Start Scanner</button>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#scannerModal">Scan the barcode</button>
             </div>
         </div>
-
+<hr>
         <div class="row" v-if="searched_books.length > 0 && (selectedCategory || search)">
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 d-flex justify-content-center" v-for="(book, index) in searched_books" :key="book.id">
                 <div class="text-center p-3">
@@ -24,7 +24,7 @@
                 </div>
             </div>
         </div>
-  
+
         <div class="row" v-else-if="!is_empty_search && remaining_books.length > 0">
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 d-flex justify-content-center" v-for="(book, index) in remaining_books" :key="book.id">
                 <div class="text-center p-3">
@@ -34,7 +34,7 @@
                     <h5 class="mt-3 text-capitalize mb-0">{{ book.title }}</h5>
                 </div>
             </div>
-        </div>  
+        </div>
 
         <div class="modal fade" id="scannerModal" tabindex="-1" aria-labelledby="scannerModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -148,7 +148,7 @@ methods: {
             this.searched_books = [];
             return false;
         }
-      
+
         let url = `/api/getBookByInput/${this.search}`;
         if (this.selectedCategory) {
             url += `?category_id=${this.selectedCategory}`;
@@ -249,7 +249,7 @@ methods: {
     },
 
     async getBookCategory() {
-         
+
         try {
             const res = await axios.get('/api/getBookCategory');
             this.categories = res.data.categories;
@@ -257,7 +257,7 @@ methods: {
             console.error('Error fetching categories:', error);
         }
     },
- 
+
     capitalizeInput() {
         this.search = this.search.replace(/\b\w/g, char => char.toUpperCase());
     },
