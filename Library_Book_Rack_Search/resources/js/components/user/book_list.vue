@@ -7,7 +7,7 @@
                 <span class="visually-hidden">Loading...</span>
             </div>
         </div>
-        
+
         <div v-if="!loading && !rented_books.length">
             No rented books found. Feel free to rent some books.
         </div>
@@ -16,14 +16,14 @@
             <div v-for="(record, index) in rented_books" :key="record.id" class="col-md-3 mb-4">
                 <div class="card shadow-sm">
                     <router-link :to="`/api/bookDetail/${record.book_id}`">
-                        <img :src="record.book.image_path" class="card-img-top" alt="Book Image" width="150" height="220" v-if="record.book.image_path" />
+                        <img :src="record.book.image_path" class="card-img-top" alt="Book Image" width="250" height="450" v-if="record.book.image_path" />
                     </router-link>
 
                     <span class="badge text-bg-danger expired-badge" v-if="isExpired(record.expired_at)">Expired</span>
 
                     <div class="card-body">
                         <h5 class="card-title text-capitalize">{{ record.book.title || '-' }}</h5>
-                        <p class="card-text">Expired At: 
+                        <p class="card-text">Expired At:
                             <span :class="{'text-danger': isExpired(record.expired_at)}">
                                 {{ $moment(record.expired_at).format('YYYY-MM-DD HH:mm A') }}
                             </span>
@@ -67,7 +67,7 @@
 
                 Swal.fire('Updated!', 'return book completed', 'success');
             }
-    
+
             const getBookList = async () => {
                 loading.value = true;
                 try {
@@ -85,11 +85,11 @@
                     loading.value = false;
                 }
             };
-    
+
             onMounted(async () => {
                 await getBookList();
             });
-    
+
             return {
                 rented_books,
                 loading,

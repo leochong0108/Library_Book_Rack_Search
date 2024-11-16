@@ -209,11 +209,11 @@ class BookController extends Controller
 
     public function findBookByScan($id){
 
-         $book = Book::findOrFail($id);
+        $books = Book::with('category')->find($id);
 
          return response()->json([
             'success' => true,
-            'data' => $book,
+            'data' => $books,
          ]);
     }
 

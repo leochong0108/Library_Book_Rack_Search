@@ -160,6 +160,10 @@ const routes = [
 const router = createRouter({
     history: createWebHistory(),
     routes,
+    scrollBehavior(to, from, savedPosition) {
+        // Always scroll to top
+        return { top: 0 };
+    },
 });
 
 router.beforeEach((to, from, next) => {
