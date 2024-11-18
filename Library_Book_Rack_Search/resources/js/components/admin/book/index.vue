@@ -78,11 +78,12 @@
 </template>
 
 <script>
-import { ref, onMounted, nextTick } from 'vue';
+import { ref, onMounted, nextTick, onBeforeUnmount } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import JsBarcode from 'jsbarcode';
+import io from 'socket.io-client';
 
 export default {
     setup() {
@@ -91,6 +92,8 @@ export default {
         const router = useRouter();
         const selectedBook = ref(null);
         const barcodeSvg = ref(null);
+
+        const socket = io('http://localhost:3000');
 
         const getData = async () => {
             loading.value = true;
@@ -158,8 +161,28 @@ export default {
             // show book detail
         };
 
+        const updateBookStatus = (updatedBook) => {
+            const book = books.value.find((book) => book.id === updatedBook.book_id);
+            if (book) {
+                book.is_available = updatedBook.is_available;
+            }
+        };
+
         onMounted(() => {
             getData();
+
+            socket.on('bookRented', (updatedBook) => {
+                updateBookStatus(updatedBook);
+            });
+
+            socket.on('bookReturned', (updatedBook) => {
+                updateBookStatus(updatedBook);
+            });
+        });
+
+        onBeforeUnmount(() => {
+            socket.off('bookRented');
+            socket.off('bookReturned');
         });
 
         return {

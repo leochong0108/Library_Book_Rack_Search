@@ -12,6 +12,7 @@ use App\Models\Category;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use GuzzleHttp\Client;
 
 class BookController extends Controller
 {
@@ -189,6 +190,15 @@ class BookController extends Controller
 
             DB::commit();
 
+            $client = new Client();
+
+            $response = $client->post('http://localhost:3000/rent-book', [
+                'json' => [
+                    'book_id' => $book->id,
+                    'is_available' => false,
+                ]
+            ]);
+
             return response()->json([
                 'success'=>true
             ]);
@@ -260,6 +270,15 @@ class BookController extends Controller
             $book->update(['is_available'=> true]);
 
             DB::commit();
+
+            $client = new Client();
+
+            $response = $client->post('http://localhost:3000/return-book', [
+                'json' => [
+                    'book_id' => $book->id,
+                    'is_available' => true,
+                ]
+            ]);
 
             return response()->json([
                 'success'=>true
