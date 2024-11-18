@@ -200,7 +200,7 @@ export default {
         const showTooltip = (key, event) => {
             tooltipText.value = explanations[key];
             tooltipStyle.value = {
-                top: `${event.clientY + 10}px`,
+                top: `${event.clientY + 30}px`,
                 left: `${event.clientX + 50}px`,
             };
             showInfo.value = true;
