@@ -115,6 +115,7 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import {  useRouter, useRoute } from 'vue-router';
 import Swal from 'sweetalert2';
+import { inject } from 'vue';
 
 export default {
     setup() {
@@ -126,6 +127,7 @@ export default {
         const showInfo = ref(false);
         const tooltipText = ref('');
         const tooltipStyle = ref({});
+        const countRentedBook = inject('countRentedBook');
 
         const getBook = async () => {
             const bookId = route.params.id;
@@ -169,6 +171,8 @@ export default {
                     confirmButtonColor: '#007bff',
                     confirmButtonText: 'Ok'
                 });
+
+                await countRentedBook();
 
                 //books.value = response.data.data;
             } catch (err) {

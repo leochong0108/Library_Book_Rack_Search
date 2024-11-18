@@ -45,12 +45,14 @@
     import { useRouter } from 'vue-router';
     import axios from 'axios';
     import Swal from 'sweetalert2';
+    import { inject } from 'vue';
 
     export default {
         setup() {
             const router = useRouter();
             const rented_books = ref([]);
             const loading = ref(false);
+            const countRentedBook = inject('countRentedBook');
 
             const isExpired = (expiredAt) => {
                 const currentDate = new Date();
@@ -66,6 +68,10 @@
                 });
 
                 Swal.fire('Updated!', 'return book completed', 'success');
+               
+                await countRentedBook();
+                
+                await getBookList();
             }
 
             const getBookList = async () => {

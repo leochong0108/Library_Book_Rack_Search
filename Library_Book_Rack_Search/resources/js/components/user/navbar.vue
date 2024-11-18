@@ -40,11 +40,12 @@
   import { useRouter } from 'vue-router';
   import axios from 'axios';
   import Swal from 'sweetalert2';
+  import { inject } from 'vue';
 
   export default {
     setup(){
       const is_login = ref(false);
-      const count_rented_book = ref(null);
+      const count_rented_book = inject('count_rented_book');
       const router = useRouter();
 
       const logout = async () => {
@@ -99,25 +100,9 @@
         }
       }
 
-      const countRentedBook = async () => {
-          try {
-            const res = await axios.get('/api/countRentedBook', {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-              }
-            });
-
-            count_rented_book.value = res.data.count_rented_book
-          } catch (error) {
-            console.error('Error fetching records:', error);
-          }
-      };
-
       onMounted(async () => {
         if (localStorage.getItem('access_token')) {
           is_login.value = true;
-
-          countRentedBook();
         }
       });
 
