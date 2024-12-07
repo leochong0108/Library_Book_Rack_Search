@@ -39,7 +39,7 @@
 
         <div class="form-group mb-3">
             <label class="mb-2">Book Rack</label>
-            <v-select :options="book_racks" v-model="form.book_rack_id" label="id" :reduce="rack => rack.id" placeholder="Select a rack" @change="updateRackLayers"></v-select>
+            <v-select :options="book_racks" v-model="form.book_rack_id" label="id" :reduce="rack => rack.id" placeholder="Select a rack"></v-select>
         </div>
 
         <div class="form-group mb-3">
