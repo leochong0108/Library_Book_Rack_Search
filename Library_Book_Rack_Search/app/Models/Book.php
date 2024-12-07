@@ -30,7 +30,7 @@ class Book extends Model
     }
 
     public function bookRack(){
-        return $this->belongsTo('App\Models\BookRack');
+        return $this->belongsTo('App\Models\bookracks');
     }
 
     public function records(){

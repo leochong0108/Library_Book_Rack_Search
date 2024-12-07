@@ -37,6 +37,16 @@
             <v-select :options="categories" v-model="form.category_id" label="name" :reduce="category => category.id" placeholder="Select a category"></v-select>
         </div>
 
+        <div class="form-group mb-3">
+            <label class="mb-2">Book Rack</label>
+            <v-select :options="book_racks" v-model="form.book_rack_id" label="id" :reduce="rack => rack.id" placeholder="Select a rack" @change="updateRackLayers"></v-select>
+        </div>
+
+        <div class="form-group mb-3">
+            <label class="mb-2">Book Rack Layer</label>
+            <v-select :options="rack_layers" v-model="form.rack_layer" label="label" :reduce="layer => layer.value" placeholder="Select a layer"></v-select>
+        </div>
+
         <div class="form-group text-end">
             <button class="btn btn-primary" @click="submit" :disabled="is_submit">Submit</button>
         </div>
@@ -44,7 +54,7 @@
 </template>
 
 <script>
-    import { ref, reactive, onMounted } from 'vue';
+    import { ref, reactive, onMounted, watch } from 'vue';
     import { useRouter } from 'vue-router';
     import axios from 'axios';
     import Swal from 'sweetalert2';
@@ -57,22 +67,47 @@
                 author: '',
                 image: null,
                 duration: '',
-                category_id: ''
+                category_id: '',
+                book_rack_id: '',
+                rack_layer: ''
             });
     
             const categories = ref([]);
             const is_submit = ref(false);
             const errors = ref({});
             const router = useRouter();
+            const book_racks = ref([]);
+            const rack_layers = ref([]);
     
             const getCategory = async () => {
                 try {
                     const res = await axios.get('/api/getBookCategory');
                     categories.value = res.data.categories;
+                    book_racks.value = res.data.book_racks;
                 } catch (error) {
                     console.error('Error fetching categories:', error);
                 }
             };
+
+            const updateRackLayers = (rackId) => {
+                const selectedRack = book_racks.value.find(rack => rack.id === rackId);
+
+                if (selectedRack && selectedRack.rack_layer) {
+                    rack_layers.value = Array.from({ length: selectedRack.rack_layer }, (_, i) => ({
+                        value: i + 1,
+                        label: `Layer ${i + 1}`
+                    }));
+                } else {
+                    rack_layers.value = [];
+                }
+            };
+
+            watch(
+                () => form.book_rack_id,
+                (newRackId) => {
+                    updateRackLayers(newRackId);
+                }
+            );
     
             const handleFileUpload = (event) => {
                 form.image = event.target.files[0];
@@ -92,6 +127,8 @@
                     formData.append('description', form.description);
                     formData.append('duration', form.duration);
                     formData.append('category_id', form.category_id);
+                    formData.append('book_rack_id', form.book_rack_id);
+                    formData.append('rack_layer', form.rack_layer);
     
                     if (form.image) {
                         formData.append('image', form.image);
@@ -132,7 +169,10 @@
                 is_submit,
                 errors,
                 submit,
-                handleFileUpload
+                handleFileUpload,
+                book_racks,
+                rack_layers,
+                updateRackLayers,
             };
         }
     };

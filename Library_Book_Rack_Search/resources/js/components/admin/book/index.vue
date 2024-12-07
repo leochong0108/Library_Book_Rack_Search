@@ -24,9 +24,10 @@
                     <th scope="col">#</th>
                     <th scope="col">Title</th>
                     <th scope="col">Category</th>
+                    <th scope="col">Location</th>
                     <th scope="col">Author</th>
                     <th scope="col">Duration (days)</th>
-                    <th scope="col">Description</th>
+                    <!-- <th scope="col">Description</th> -->
                     <th scope="col">Availability</th>
                     <th scope="col">Action</th>
                 </tr>
@@ -41,9 +42,20 @@
                         </div>
                     </td>
                     <td>{{ book.category ? book.category.name : '-' }}</td>
+                    <td>
+                        <div v-if="book.book_rack">
+                            Book Rack {{ book.book_rack_id }} <span v-if="book.book_rack && book.book_rack.floor">(Floor: {{book.book_rack.floor}})</span>
+                            <div>
+                                Rack Layer {{book.rack_layer}}
+                            </div>
+                        </div>
+                        <div v-else>
+                            -
+                        </div>
+                    </td>
                     <td>{{ book.author ? book.author : '-' }}</td>
                     <td>{{ book.duration ? book.duration : '-' }}</td>
-                    <td>{{ book.description ? book.description : '-' }}</td>
+                    <!-- <td>{{ book.description ? book.description : '-' }}</td> -->
                     <td>
                         <span class="text-success" v-if="book.is_available"><span class="fas fa-circle"></span>&nbsp;Available</span>
                         <span class="text-danger" v-else><span class="fas fa-circle"></span>&nbsp;No Available</span>

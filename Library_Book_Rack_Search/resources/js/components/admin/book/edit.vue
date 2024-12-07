@@ -46,6 +46,16 @@
                 <label class="mb-2">Category</label>
                 <v-select :options="categories" v-model="form.category_id" label="name" :reduce="category => category.id" placeholder="Select a category"></v-select>
             </div>
+
+            <div class="form-group mb-3">
+                <label class="mb-2">Book Rack</label>
+                <v-select :options="book_racks" v-model="form.book_rack_id" label="id" :reduce="rack => rack.id" placeholder="Select a rack"></v-select>
+            </div>
+
+            <div class="form-group mb-3">
+                <label class="mb-2">Book Rack Layer</label>
+                <v-select :options="rack_layers" v-model="form.rack_layer" label="label" :reduce="layer => layer.value" placeholder="Select a layer"></v-select>
+            </div>    
     
             <div class="form-group text-end">
                 <button class="btn btn-primary" @click="submit" :disabled="is_submit">Submit</button>
@@ -55,7 +65,7 @@
 </template>
 
 <script>
-    import { ref, reactive, onMounted } from 'vue';
+    import { ref, reactive, onMounted, watch } from 'vue';
     import { useRouter } from 'vue-router';
     import axios from 'axios';
     import Swal from 'sweetalert2';
@@ -71,6 +81,8 @@
                 image: null,
                 description: '',
                 category_id: '',
+                book_rack_id: '',
+                rack_layer: ''
             });
 
             const previous_image = ref(null);
@@ -78,15 +90,38 @@
             const is_submit = ref(false);
             const categories = ref([]);
             const router = useRouter();
+            const book_racks = ref([]);
+            const rack_layers = ref([]);
     
             const getCategory = async () => {
                 try {
                     const res = await axios.get('/api/getBookCategory');
                     categories.value = res.data.categories;
+                    book_racks.value = res.data.book_racks;
                 } catch (error) {
                     console.error('Error fetching categories:', error);
                 }
             };
+
+            const updateRackLayers = (rackId) => {
+                const selectedRack = book_racks.value.find(rack => Number(rack.id) === Number(rackId));
+
+                if (selectedRack && selectedRack.rack_layer) {
+                    rack_layers.value = Array.from({ length: selectedRack.rack_layer }, (_, i) => ({
+                        value: i + 1,
+                        label: `Layer ${i + 1}`
+                    }));
+                } else {
+                    rack_layers.value = [];
+                }
+            };
+
+            watch(
+                () => form.book_rack_id,
+                (newRackId) => {
+                    updateRackLayers(newRackId);
+                }
+            );
     
             const getBookData = async () => {
                 if (props.id) {
@@ -101,6 +136,8 @@
                         if (book.duration) form.duration = book.duration;
                         if (book.category_id) form.category_id = book.category_id;
                         if (book.image_path) previous_image.value = book.image_path;
+                        if (book.book_rack_id) form.book_rack_id = book.book_rack_id;
+                        if (book.rack_layer) form.rack_layer = book.rack_layer;   
                            
                     } catch (error) {
                         console.error("There was an error fetching book:", error);
@@ -124,6 +161,8 @@
                     if (form.duration) formData.append('duration', form.duration);
                     if (form.category_id) formData.append('category_id', form.category_id);
                     if (form.image) formData.append('image', form.image);
+                    if (form.book_rack_id) formData.append('book_rack_id', form.book_rack_id);
+                    if (form.rack_layer) formData.append('rack_layer', form.rack_layer);
 
                     await axios.post(`/api/updateBook/${props.id}`, formData, {
                         headers: {
@@ -169,6 +208,9 @@
                 previous_image,
                 submit,
                 handleFileUpload,
+                book_racks,
+                rack_layers,
+                updateRackLayers,
             };
         }
     };

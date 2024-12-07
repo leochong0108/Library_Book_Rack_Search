@@ -12,7 +12,7 @@
                     </div>
                     <div class="col-md-5">
                         <div class="d-flex align-items-center">
-                            <h1 class="card-title text-danger mb-0">
+                            <h1 class="card-title text-danger mb-0 text-capitalize">
                                 {{ books.title || 'Book Title' }}
                             </h1>
                             <span class="ms-3 mt-2">
@@ -24,8 +24,9 @@
                                 </span>
                             </span>
                         </div>
-                        <div class="d-flex align-items-center">
-                            <h6 class="card-text mt-3">{{ books.description || 'Description not available.' }}</h6>
+                        <div class="d-flex align-items-center justify-content-between mt-3">
+                            <h6 class="card-text mb-0">{{ books.description || 'Description not available.' }}</h6>
+                            <button class="btn btn-primary" @click="openMapModal()"><i class="fas fa-map-marker-alt"></i> Book Location</button>
                         </div>
                         <hr>
                         <dl>
@@ -106,12 +107,55 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="mapModal" tabindex="-1" aria-labelledby="mapModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="scannerModalLabel">Book Location</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div v-if="books.book_rack_id">
+                        <h5 class="ms-2">Floor {{books.book_rack.floor}}</h5>
+                        <div class="d-flex flex-wrap" v-for="(row, rowIndex) in chunkedRacks" :key="rowIndex">
+                            <div class="p-3 border rounded text-center flex-fill rack" v-for="rack in row" :key="rack.id" :class="{ 'current-rack': rack.id == books.book_rack_id }" @click="viewRack(rack.id)"
+                            >
+                                <h5 class="mb-0">{{ rack.name }}</h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="is_detail">
+                        <hr>
+                        <div class="d-flex flex-wrap" >
+                            <div v-for="rack in layers" :key="rack.id" class="rack-container border rounded p-3 me-3">
+                                <div v-for="layer in rack.layers.slice().reverse()" :key="layer.id" class="rack-layer border p-2 mb-2" :class="{ 'current-layer': layer.id == books.rack_layer }"
+                                >
+                                    <p>Layer {{ layer.id }}</p>
+                                    <div class="layer-books d-flex flex-wrap">
+                                        <span class="book-item border rounded me-2 p-1 text-capitalize" v-if="layer.id == books.rack_layer"
+                                        >
+                                            {{ books.title }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div> 
 </div>
 
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed, nextTick } from 'vue';
 import axios from 'axios';
 import {  useRouter, useRoute } from 'vue-router';
 import Swal from 'sweetalert2';
@@ -128,6 +172,39 @@ export default {
         const tooltipText = ref('');
         const tooltipStyle = ref({});
         const countRentedBook = inject('countRentedBook');
+        const is_detail = ref(false);
+
+        const layers = ref([
+            {
+                id: 1,
+                layers: [
+                    { id: 1, books: ["Book A", "Book B"] },
+                    { id: 2, books: ["Book C"] },
+                    { id: 3, books: [] },
+                ],
+            },
+        ]);
+
+        const racks = ref([
+            { id: 1, name: 'Book Rack 1' },
+            { id: 2, name: 'Book Rack 2' },
+            { id: 3, name: 'Book Rack 3' },
+            { id: 4, name: 'Book Rack 4' },
+            { id: 5, name: 'Book Rack 5' },
+            { id: 6, name: 'Book Rack 6' },
+        ]);
+
+        const racksPerRow = ref(3);
+
+        const chunkArray = (array, chunkSize) => {
+            const chunks = [];
+            for (let i = 0; i < array.length; i += chunkSize) {
+                chunks.push(array.slice(i, i + chunkSize));
+            }
+            return chunks;
+        };
+
+        const chunkedRacks = computed(() => chunkArray(racks.value, racksPerRow.value));
 
         const getBook = async () => {
             const bookId = route.params.id;
@@ -222,6 +299,22 @@ export default {
             getBook();
         });
 
+        const viewRack = (rack_id) => {
+            if(rack_id != books.value.book_rack_id){
+                is_detail.value = false;
+                return false
+            }
+
+            is_detail.value = !is_detail.value;
+        }
+
+        const openMapModal = () => {
+            nextTick(() => {
+                const modal = new bootstrap.Modal(document.getElementById('mapModal'));
+                modal.show();
+            });
+        };
+
         return {
             books,
             error,
@@ -234,6 +327,11 @@ export default {
             tooltipStyle,
             showTooltip,
             hideTooltip,
+            chunkedRacks,
+            layers,
+            is_detail,
+            openMapModal,            
+            viewRack
         };
     }
 };
@@ -260,4 +358,44 @@ export default {
     transform: translate(-50%, -50%);
 }
 
+.current-rack {
+    background-color: #ffc107 !important;
+    color: #fff;
+    font-weight: bold;
+}
+
+.rack-container {
+    width: 250px;
+    background-color: #f8f9fa;
+}
+
+.rack-layer {
+    background-color: #e9ecef;
+}
+
+.layer-books {
+    flex-wrap: wrap;
+}
+
+.book-item {
+    background-color: #007bff;
+    color: white;
+    padding: 5px 10px;
+    margin-bottom: 5px;
+    display: inline-block;
+}
+
+.current-layer {
+    background-color: #ffc107 !important;
+    color: white;
+}
+
+.rack{
+    margin: 5px;
+    background-color: #007bff;
+}
+
+.rack:hover{
+    cursor: pointer;
+}
 </style>

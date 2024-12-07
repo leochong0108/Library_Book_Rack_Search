@@ -13,11 +13,12 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use GuzzleHttp\Client;
+use App\Models\bookracks;
 
 class BookController extends Controller
 {
     public function getAllBook(Request $request){
-        $books = Book::with('category')->orderBy('created_at', 'desc')->get();
+        $books = Book::with('category','bookRack')->orderBy('created_at', 'desc')->get();
 
         if($request->is_admin){
             return response()->json(['data' => $books, 'success' => true]);
@@ -219,7 +220,7 @@ class BookController extends Controller
 
     public function findBookByScan($id){
 
-        $books = Book::with('category')->find($id);
+        $books = Book::with('category','bookRack')->find($id);
 
          return response()->json([
             'success' => true,
@@ -235,7 +236,12 @@ class BookController extends Controller
             ];
         });
 
-        return response()->json(['categories' => $categories]);
+        $book_racks = bookracks::all();
+
+        return response()->json([
+            'categories' => $categories,
+            'book_racks' => $book_racks
+        ]);
     }
 
     public function getBook(Request $request){
@@ -246,9 +252,9 @@ class BookController extends Controller
 
     public function returnBook($id){
 
-        // if(!$user = Auth::user()){
-        //     return response()->json(['success' => false]);
-        // }
+        if(!$user = Auth::user()){
+            return response()->json(['success' => false]);
+        }
 
         DB::beginTransaction();
 
@@ -262,7 +268,7 @@ class BookController extends Controller
 
             Record::create([
                 'book_id' => $book->id,
-                // 'user_id' => $user->id,
+                'user_id' => $user->id,
                 'remark' => 'return',
                 'action' => 'return book',
             ]);
