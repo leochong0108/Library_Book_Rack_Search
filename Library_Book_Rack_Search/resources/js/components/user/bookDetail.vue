@@ -124,6 +124,12 @@
                                 <h5 class="mb-0">{{ rack.name }}</h5>
                             </div>
                         </div>
+                        
+                        <div class="d-flex justify-content-center w-100 mt-2">
+                            <div class="p-3 border rounded text-center bg-danger" style="width: 32%;">
+                                <h5 class="mb-0">Door</h5>
+                            </div>
+                        </div>
                     </div>
 
                     <div v-if="is_detail">
@@ -192,6 +198,9 @@ export default {
             { id: 4, name: 'Book Rack 4' },
             { id: 5, name: 'Book Rack 5' },
             { id: 6, name: 'Book Rack 6' },
+            { id: 7, name: 'Book Rack 7' },
+            { id: 8, name: 'Book Rack 8' },
+            { id: 9, name: 'Book Rack 9' },
         ]);
 
         const racksPerRow = ref(3);
