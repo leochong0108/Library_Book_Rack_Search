@@ -10,6 +10,8 @@ class bookracks extends Model
         'rack_layer',
         'floor',
         'range',
+        'start',
+        'end'
     ];
 
     public function books(){

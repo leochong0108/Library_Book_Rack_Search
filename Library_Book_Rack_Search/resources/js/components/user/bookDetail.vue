@@ -26,6 +26,8 @@
                         </div>
                         <div class="d-flex align-items-center justify-content-between mt-3">
                             <h6 class="card-text mb-0">{{ books.description || 'Description not available.' }}</h6>
+                        </div>
+                        <div class="mt-3">
                             <button class="btn btn-primary" @click="openMapModal()"><i class="fas fa-map-marker-alt"></i> Book Location</button>
                         </div>
                         <hr>
@@ -121,35 +123,39 @@
                         <div class="d-flex flex-wrap" v-for="(row, rowIndex) in chunkedRacks" :key="rowIndex">
                             <div class="p-3 border rounded text-center flex-fill rack" v-for="rack in row" :key="rack.id" :class="{ 'current-rack': rack.id == books.book_rack_id }" @click="viewRack(rack.id)"
                             >
-                                <h5 class="mb-0">{{ rack.name }}</h5>
+                                <h5 class="mb-0">Book Rack {{ rack.id }}</h5>
+                                <h5 class="mb-0">{{ rack.start }} - {{ rack.end }}</h5>
                             </div>
                         </div>
+                        <div class="Entry">Entry</div>
+                        <br>
                     </div>
 
                     <div v-if="is_detail">
-                        <hr>
-                        <div class="d-flex flex-wrap" >
-                            <div v-for="rack in layers" :key="rack.id" class="rack-container border rounded p-3 me-3">
-                                <div v-for="layer in rack.layers.slice().reverse()" :key="layer.id" class="rack-layer border p-2 mb-2" :class="{ 'current-layer': layer.id == books.rack_layer }"
-                                >
-                                    <p>Layer {{ layer.id }}</p>
-                                    <div class="layer-books d-flex flex-wrap">
-                                        <span class="book-item border rounded me-2 p-1 text-capitalize" v-if="layer.id == books.rack_layer"
-                                        >
-                                            {{ books.title }}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
+            <hr>
+        <div class="d-flex flex-wrap justify-content-center align-items-center">
+            <h5>Book Rack Details</h5>
+        </div>
+            <div class="d-flex flex-wrap justify-content-center align-items-center">
+                <div v-for="rack in layers" :key="rack.id" class="rack-container border rounded p-3 me-3">
+                    <div v-for="layer in rack.layers.slice().reverse()" :key="layer.id" class="rack-layer border p-2 mb-2" :class="{ 'current-layer': layer.id == books.rack_layer }">
+                        <p class="text-center">Layer {{ layer.id }}</p>
+                        <div class="layer-books d-flex flex-wrap justify-content-center">
+                            <span class="book-item border rounded me-2 p-1 text-capitalize" v-if="layer.id == books.rack_layer">
+                                {{ books.title }}
+                            </span>
                         </div>
                     </div>
+                </div>
+            </div>
+    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
 </div>
 
 </template>
@@ -186,12 +192,6 @@ export default {
         ]);
 
         const racks = ref([
-            { id: 1, name: 'Book Rack 1' },
-            { id: 2, name: 'Book Rack 2' },
-            { id: 3, name: 'Book Rack 3' },
-            { id: 4, name: 'Book Rack 4' },
-            { id: 5, name: 'Book Rack 5' },
-            { id: 6, name: 'Book Rack 6' },
         ]);
 
         const racksPerRow = ref(3);
@@ -209,9 +209,18 @@ export default {
         const getBook = async () => {
             const bookId = route.params.id;
             try {
-                console.log(`/api/findBookByScan/${route.params.id}`);
                 const response = await axios.get(`/api/findBookByScan/${bookId}`);
                 books.value = response.data.data;
+            } catch (err) {
+                error.value = err.response?.data?.message || 'Error fetching books';
+            }
+        };
+
+       const getRack = async () => {
+            try {
+                const response = await axios.get(`/api/getAllRack`);
+                racks.value = response.data.data;
+                console.log(racks.value);
             } catch (err) {
                 error.value = err.response?.data?.message || 'Error fetching books';
             }
@@ -309,6 +318,7 @@ export default {
         }
 
         const openMapModal = () => {
+            getRack();
             nextTick(() => {
                 const modal = new bootstrap.Modal(document.getElementById('mapModal'));
                 modal.show();
@@ -320,6 +330,7 @@ export default {
             error,
             is_admin,
             getBook,
+            getRack,
             rentBook,
             returnBook,
             showInfo,
@@ -330,7 +341,7 @@ export default {
             chunkedRacks,
             layers,
             is_detail,
-            openMapModal,            
+            openMapModal,
             viewRack
         };
     }
@@ -397,5 +408,12 @@ export default {
 
 .rack:hover{
     cursor: pointer;
+}
+
+.Entry {
+    margin-top: 20px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
 }
 </style>

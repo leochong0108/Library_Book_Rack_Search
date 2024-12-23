@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('rack_layer')->nullable();
             $table->string('floor')->nullable();  // Location like 'R1C3'
             $table->string('range', 500)->nullable();
+            $table->string('start', 500)->nullable();
+            $table->string('end', 500)->nullable();
             $table->timestamps();
         });
     }

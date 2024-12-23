@@ -24,7 +24,8 @@
                     <th scope="col">Rack_ID</th>
                     <th scope="col">Rack Layer</th>
                     <th scope="col">Floor</th>
-                    <th scope="col">Range</th>
+                    <th scope="col">Start</th>
+                    <th scope="col">End</th><th scope="col">Start</th>
                     <th scope="col">Actions</th>
                 </tr>
             </thead>
@@ -33,7 +34,8 @@
                     <td>{{ rack.id }}</td>
                     <td>{{ rack.rack_layer }}</td>
                     <td>{{ rack.floor }}</td>
-                    <td>{{ rack.range }}</td>
+                    <td>{{ rack.start }}</td>
+                    <td>{{ rack.end }}</td>
                     <td>
                         <button class="btn btn-success" @click="editRack(rack)"><i class="fas fa-edit"></i>&nbsp;Edit</button>
                         <button class="btn btn-danger ms-2" @click="deleteRack(rack.id)"><i class="fas fa-trash-alt"></i>&nbsp;Delete</button>
@@ -69,13 +71,15 @@ export default {
                 html:
                     '<input id="rackLayer" class="swal2-input" placeholder="Rack Layer">' +
                     '<input id="floor" class="swal2-input" placeholder="Floor">' +
-                    '<input id="range" class="swal2-input" placeholder="Range">',
+                    '<input id="start" class="swal2-input" placeholder="Start">' +
+                    '<input id="end" class="swal2-input" placeholder="End">',
                 focusConfirm: false,
                 preConfirm: () => {
                     return {
                         rack_layer: document.getElementById('rackLayer').value,
                         floor: document.getElementById('floor').value,
-                        range: document.getElementById('range').value,
+                        start: document.getElementById('start').value,
+                        end: document.getElementById('end').value,
                     };
                 }
             });
@@ -97,13 +101,14 @@ export default {
                 html:
                     `<input id="rackLayer" class="swal2-input" placeholder="Rack Layer" value="${rack.rack_layer}">` +
                     `<input id="floor" class="swal2-input" placeholder="Floor" value="${rack.floor}">` +
-                    `<input id="range" class="swal2-input" placeholder="Range" value="${rack.range}">`,
+                    `<input id="start" class="swal2-input" placeholder="Start" value="${rack.start}">` +
+                    `<input id="end" class="swal2-input" placeholder="End" value="${rack.end}">`,
                 focusConfirm: false,
                 preConfirm: () => {
                     return {
                         rack_layer: document.getElementById('rackLayer').value,
-                        floor: document.getElementById('floor').value,
-                        range: document.getElementById('range').value,
+                        start: document.getElementById('start').value,
+                        end: document.getElementById('end').value,
                     };
                 }
             });
