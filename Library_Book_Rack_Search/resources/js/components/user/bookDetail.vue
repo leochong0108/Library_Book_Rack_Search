@@ -127,6 +127,11 @@
                                 <h5 class="mb-0">{{ rack.start }} - {{ rack.end }}</h5>
                             </div>
                         </div>
+                        <div class="d-flex justify-content-center w-100 mt-2">
+                            <div class="p-3 border rounded text-center bg-danger" style="width: 32%;">
+                                <h5 class="mb-0">Door</h5>
+                            </div>
+                        </div>
                         <div class="Entry">Entry</div>
                         <br>
                     </div>
@@ -191,8 +196,7 @@ export default {
             },
         ]);
 
-        const racks = ref([
-        ]);
+        const racks = ref([ ]);
 
         const racksPerRow = ref(3);
 
