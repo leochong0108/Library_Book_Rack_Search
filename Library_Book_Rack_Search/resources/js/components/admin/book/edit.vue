@@ -23,17 +23,22 @@
                 <label class="mb-2">New Book Image</label>
                 <input type="file" class="form-control" @change="handleFileUpload" />
             </div>
-    
+
             <div class="form-group mb-3">
                 <label class="mb-2">Book Description</label>
                 <input type="text" class="form-control" v-model="form.description" placeholder="Enter book description" />
             </div>
-    
+
             <div class="form-group mb-3">
                 <label class="mb-2">Book Author</label>
                 <input type="text" class="form-control" v-model="form.author" placeholder="Enter book author"/>
             </div>
-    
+
+            <div class="form-group mb-3">
+                <label class="mb-2">Book Location ID</label>
+                <input type="text" class="form-control" v-model="form.location_id" placeholder="Enter Book Location ID"/>
+            </div>
+
             <div class="form-group mb-3">
                 <label class="mb-2">Duration</label>
                 <div class="input-group">
@@ -41,7 +46,7 @@
                     <label class="input-group-text">day(s)</label>
                 </div>
             </div>
-    
+
             <div class="form-group mb-3">
                 <label class="mb-2">Category</label>
                 <v-select :options="categories" v-model="form.category_id" label="name" :reduce="category => category.id" placeholder="Select a category"></v-select>
@@ -55,8 +60,8 @@
             <div class="form-group mb-3">
                 <label class="mb-2">Book Rack Layer</label>
                 <v-select :options="rack_layers" v-model="form.rack_layer" label="label" :reduce="layer => layer.value" placeholder="Select a layer"></v-select>
-            </div>    
-    
+            </div>
+
             <div class="form-group text-end">
                 <button class="btn btn-primary" @click="submit" :disabled="is_submit">Submit</button>
             </div>
@@ -78,6 +83,7 @@
                 title: '',
                 duration: '',
                 author: '',
+                location_id: '',
                 image: null,
                 description: '',
                 category_id: '',
@@ -92,7 +98,7 @@
             const router = useRouter();
             const book_racks = ref([]);
             const rack_layers = ref([]);
-    
+
             const getCategory = async () => {
                 try {
                     const res = await axios.get('/api/getBookCategory');
@@ -122,7 +128,7 @@
                     updateRackLayers(newRackId);
                 }
             );
-    
+
             const getBookData = async () => {
                 if (props.id) {
                     loading.value = true;
@@ -132,13 +138,14 @@
 
                         if (book.title) form.title = book.title;
                         if (book.author) form.author = book.author;
+                        if (book.location_id) form.location_id = book.location_id;
                         if (book.description) form.description = book.description;
                         if (book.duration) form.duration = book.duration;
                         if (book.category_id) form.category_id = book.category_id;
                         if (book.image_path) previous_image.value = book.image_path;
                         if (book.book_rack_id) form.book_rack_id = book.book_rack_id;
-                        if (book.rack_layer) form.rack_layer = book.rack_layer;   
-                           
+                        if (book.rack_layer) form.rack_layer = book.rack_layer;
+
                     } catch (error) {
                         console.error("There was an error fetching book:", error);
                     } finally {
@@ -146,17 +153,18 @@
                     }
                 }
             };
-    
+
             const submit = async () => {
                 if (is_submit.value) return;
-    
+
                 is_submit.value = true;
-    
+
                 try {
                     const formData = new FormData();
-                    
+
                     if (form.title) formData.append('title', form.title);
                     if (form.author) formData.append('author', form.author);
+                    if (form.location_id) formData.append('location_id', form.location_id);
                     if (form.description) formData.append('description', form.description);
                     if (form.duration) formData.append('duration', form.duration);
                     if (form.category_id) formData.append('category_id', form.category_id);
@@ -169,14 +177,14 @@
                             'Content-Type': 'multipart/form-data',
                         },
                     });
-    
+
                     await Swal.fire({
                         title: 'Updated successfully',
                         icon: 'success',
                         confirmButtonColor: '#007bff',
                         confirmButtonText: 'Ok'
                     });
-    
+
                     router.push('/api/book');
                 } catch (error) {
                     if (error.response && error.response.status === 422) {
@@ -189,16 +197,16 @@
                     is_submit.value = false;
                 }
             };
-    
+
             const handleFileUpload = (event) => {
                 form.image = event.target.files[0];
             };
-    
+
             onMounted(async () => {
                 await getCategory();
                 await getBookData();
             });
-    
+
             return {
                 loading,
                 form,

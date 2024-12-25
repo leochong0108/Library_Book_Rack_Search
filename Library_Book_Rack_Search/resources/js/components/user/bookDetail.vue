@@ -60,7 +60,7 @@
                                     @mouseleave="hideTooltip"
                                 ></i>
                             </dt>
-                            <dd>{{ books.floor || 'Not specified' }}</dd>
+                            <dd>{{ books.floor || 'Not specified' }}</dd>{{}}
 
                             <dt>
                                 Book Rack ID
@@ -192,6 +192,8 @@ export default {
                     { id: 1, books: ["Book A", "Book B"] },
                     { id: 2, books: ["Book C"] },
                     { id: 3, books: [] },
+                    { id: 4, books: [] },
+                    { id: 5, books: [] },
                 ],
             },
         ]);

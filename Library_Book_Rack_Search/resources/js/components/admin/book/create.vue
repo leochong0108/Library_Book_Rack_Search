@@ -25,6 +25,11 @@
         </div>
 
         <div class="form-group mb-3">
+            <label class="mb-2">Book Location ID</label>
+            <input type="text" class="form-control" v-model="form.location_id" placeholder="Enter Book Location ID"/>
+        </div>
+
+        <div class="form-group mb-3">
             <label class="mb-2">Duration</label>
             <div class="input-group">
                 <input type="number" class="form-control" v-model="form.duration" min="1" />
@@ -65,20 +70,21 @@
                 title: '',
                 description: '',
                 author: '',
+                location_id: '',
                 image: null,
                 duration: '',
                 category_id: '',
                 book_rack_id: '',
                 rack_layer: ''
             });
-    
+
             const categories = ref([]);
             const is_submit = ref(false);
             const errors = ref({});
             const router = useRouter();
             const book_racks = ref([]);
             const rack_layers = ref([]);
-    
+
             const getCategory = async () => {
                 try {
                     const res = await axios.get('/api/getBookCategory');
@@ -108,45 +114,46 @@
                     updateRackLayers(newRackId);
                 }
             );
-    
+
             const handleFileUpload = (event) => {
                 form.image = event.target.files[0];
             };
-    
+
             const submit = async () => {
                 if (is_submit.value) return;
-    
+
                 is_submit.value = true;
                 errors.value = {};
-    
+
                 try {
                     const formData = new FormData();
-    
+
                     formData.append('title', form.title);
                     formData.append('author', form.author);
+                    formData.append('location_id', form.location_id);
                     formData.append('description', form.description);
                     formData.append('duration', form.duration);
                     formData.append('category_id', form.category_id);
                     formData.append('book_rack_id', form.book_rack_id);
                     formData.append('rack_layer', form.rack_layer);
-    
+
                     if (form.image) {
                         formData.append('image', form.image);
                     }
-    
+
                     await axios.post('/api/createBook', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',
                         },
                     });
-    
+
                     Swal.fire({
                         title: 'Added successfully',
                         icon: 'success',
                         confirmButtonColor: '#007bff',
                         confirmButtonText: 'Ok'
                     });
-    
+
                     router.push('/api/book');
                 } catch (error) {
                     if (error.response && error.response.status === 422) {
@@ -158,11 +165,11 @@
                     is_submit.value = false;
                 }
             };
-    
+
             onMounted(() => {
                 getCategory();
             });
-    
+
             return {
                 form,
                 categories,
