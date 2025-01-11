@@ -60,7 +60,7 @@
                                     @mouseleave="hideTooltip"
                                 ></i>
                             </dt>
-                            <dd>{{ books.floor || 'Not specified' }}</dd>{{}}
+                            <dd>{{ books.book_rack?.floor || 'Not specified' }}</dd>
 
                             <dt>
                                 Book Rack ID

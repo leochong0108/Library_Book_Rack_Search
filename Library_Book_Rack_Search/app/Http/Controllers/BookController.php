@@ -84,7 +84,6 @@ class BookController extends Controller
             'category_id'=>'nullable',
             'book_rack_id'=>'nullable',
             'rack_layer'=>'nullable',
-            'floor'=>'nullable',
             'location_id'=>'nullable',
             'image' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048', // Validate image files
             'title'=>'nullable',
@@ -116,7 +115,6 @@ class BookController extends Controller
             'category_id'=>'nullable',
             'book_rack_id'=>'nullable',
             'rack_layer'=>'nullable',
-            'floor'=>'nullable',
             'location_id'=>'nullable',
             'image' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048',
             'title'=>'nullable',
