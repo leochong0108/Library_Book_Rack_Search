@@ -48,6 +48,8 @@ class BookRackController extends Controller
             'rack_layer' => 'nullable',
             'floor' => 'nullable',
             'range' => 'nullable',
+            'start' => 'nullable',
+            'end' => 'nullable',
 
         ]);
 
