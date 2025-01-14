@@ -275,12 +275,19 @@ export default {
 
         const returnBook = async (id) => {
             try {
-                const response = await axios.post(`/api/returnBook/${id}`);
+                const response = await axios.post(`/api/returnBook/${id}`, {}, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('access_token')}`
+                    }
+                });
                 Swal.fire('Updated!', 'return book completed', 'success');
             } catch (err) {
                 error.value = err.response?.data?.message || 'Error return book'
                 Swal.fire('Error', err.response?.data?.message , 'error');
             }
+
+            await countRentedBook();
+            
             getBook();
         };
 
