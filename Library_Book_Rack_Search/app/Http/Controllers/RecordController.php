@@ -49,9 +49,27 @@ class RecordController extends Controller
     }
 
     public function countRentedBook(Request $request){
-        $returned_book_ids = Record::select('book_id')->where('remark', 'return')->where('user_id', auth()->id())->pluck('book_id')->toArray();
+        $records = Record::where('user_id', auth()->id())->orderBy('book_id')->orderBy('created_at')->get();
 
-        $count_rented_book = Record::where('remark', 'rented')->where('user_id', auth()->id())->whereNotIn('book_id', $returned_book_ids)->count();
+        $count_rented_book = 0;
+
+        foreach ($records->groupBy('book_id') as $book_id => $book_records) {
+            $is_rented = false;
+
+            foreach ($book_records as $record) {
+                if ($record->remark === 'rented') {
+                    $is_rented = true;
+                }
+
+                if ($record->remark === 'return') {
+                    $is_rented = false;
+                }
+            }
+
+            if ($is_rented) {
+                $count_rented_book++;
+            }
+        }
 
         return response()->json([
             'count_rented_book' => $count_rented_book,
@@ -59,9 +77,28 @@ class RecordController extends Controller
     }
 
     public function getRentedBook(Request $request){
-        $returned_book_ids = Record::select('book_id')->where('remark', 'return')->where('user_id', auth()->id())->pluck('book_id')->toArray();
+        $records = Record::where('user_id', auth()->id())->orderBy('book_id')->orderBy('created_at')->get();
 
-        $rented_books = Record::with('book')->where('remark', 'rented')->where('user_id', auth()->id())->whereNotIn('book_id', $returned_book_ids)->get();
+        $rented_books = [];
+
+        foreach ($records->groupBy('book_id') as $book_id => $book_records) {
+            $is_rented = false;
+
+            foreach ($book_records as $record) {
+                if ($record->remark === 'rented') {
+                    $is_rented = true;
+                }
+
+                if ($record->remark === 'return') {
+                    $is_rented = false;
+                }
+            }
+
+            if ($is_rented) {
+                $latest_rental = $book_records->where('remark', 'rented')->last();
+                $rented_books[] = $latest_rental->load('book');
+            }
+        }
 
         return response()->json([
             'rented_books' => $rented_books,
