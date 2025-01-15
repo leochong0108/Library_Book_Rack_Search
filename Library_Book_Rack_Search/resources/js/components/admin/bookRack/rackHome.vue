@@ -25,7 +25,7 @@
                     <th scope="col">Rack Layer</th>
                     <th scope="col">Floor</th>
                     <th scope="col">Start</th>
-                    <th scope="col">End</th><th scope="col">Start</th>
+                    <th scope="col">End</th>
                     <th scope="col">Actions</th>
                 </tr>
             </thead>
